@@ -1,6 +1,6 @@
 package learning.blockchain.ledgeradmin.configs;
 
-import learning.chaincode.fabricadmin.dtos.SampleOrg;
+import learning.blockchain.ledgeradmin.dtos.SampleOrg;
 import lombok.Data;
 import org.hyperledger.fabric.sdk.helper.Utils;
 import org.springframework.beans.factory.annotation.Autowired;

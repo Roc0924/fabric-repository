@@ -1,11 +1,8 @@
 package learning.blockchain.ledgeradmin.services;
 
 
-import learning.chaincode.fabricadmin.configs.FabricConfig;
-import learning.chaincode.fabricadmin.configs.FabricConfigManager;
-import learning.chaincode.fabricadmin.dtos.ChainCodeDto;
-import learning.chaincode.fabricadmin.dtos.InstalledProposal;
-import learning.chaincode.fabricadmin.dtos.SampleOrg;
+import learning.blockchain.ledgeradmin.dtos.ChainCodeDto;
+import learning.blockchain.ledgeradmin.dtos.SampleOrg;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.protos.peer.Query;
 import org.hyperledger.fabric.sdk.*;

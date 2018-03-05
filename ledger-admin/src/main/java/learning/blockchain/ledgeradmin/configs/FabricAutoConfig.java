@@ -3,10 +3,9 @@ package learning.blockchain.ledgeradmin.configs;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import learning.chaincode.fabricadmin.dtos.SampleOrg;
-import learning.chaincode.fabricadmin.dtos.SampleStore;
-import learning.chaincode.fabricadmin.dtos.SampleUser;
-import learning.chaincode.fabricadmin.utils.Util;
+import learning.blockchain.ledgeradmin.dtos.SampleOrg;
+import learning.blockchain.ledgeradmin.dtos.SampleStore;
+import learning.blockchain.ledgeradmin.dtos.SampleUser;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.sdk.*;
 import org.hyperledger.fabric.sdk.exception.CryptoException;
