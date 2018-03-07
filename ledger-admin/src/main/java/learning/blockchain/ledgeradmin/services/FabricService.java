@@ -2,7 +2,6 @@ package learning.blockchain.ledgeradmin.services;
 
 
 import learning.blockchain.ledgeradmin.dtos.ChainCodeDto;
-import learning.blockchain.ledgeradmin.dtos.SampleOrg;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.protos.peer.Query;
 import org.hyperledger.fabric.sdk.*;

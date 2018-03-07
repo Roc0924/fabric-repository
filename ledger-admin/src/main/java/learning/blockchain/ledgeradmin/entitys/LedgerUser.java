@@ -1,7 +1,6 @@
 package learning.blockchain.ledgeradmin.entitys;
 
 import io.netty.util.internal.StringUtil;
-import learning.blockchain.ledgeradmin.dtos.SampleStore;
 import org.bouncycastle.util.encoders.Hex;
 import org.hyperledger.fabric.sdk.Enrollment;
 import org.hyperledger.fabric.sdk.User;
