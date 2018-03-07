@@ -1,6 +1,6 @@
 package learning.blockchain.ledgeradmin.configs;
 
-import learning.blockchain.ledgeradmin.dtos.SampleOrg;
+import learning.blockchain.ledgeradmin.entitys.LedgerOrg;
 import lombok.Data;
 import org.hyperledger.fabric.sdk.helper.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,8 @@ public class FabricConfigManager {
     private final FabricConfig fabricConfig;
     private Pattern orgPat = null;
     private final Properties sdkProperties = new Properties();
-    private final HashMap<String, SampleOrg> sampleOrgs = new HashMap<>();
+    private final HashMap<String, LedgerOrg> sampleOrgs = new HashMap<>();
+    
     
     
     private final boolean runningTLS;
@@ -76,7 +77,7 @@ public class FabricConfigManager {
 
                 if (match.matches() && match.groupCount() == 1) {
                     String orgName = match.group(1).trim();
-                    sampleOrgs.put(orgName, new SampleOrg(orgName, val.trim()));
+                    sampleOrgs.put(orgName, new LedgerOrg(orgName, val.trim()));
 
                 }
             }
@@ -84,8 +85,8 @@ public class FabricConfigManager {
 
 
 
-        for (Map.Entry<String, SampleOrg> org : sampleOrgs.entrySet()) {
-            final SampleOrg sampleOrg = org.getValue();
+        for (Map.Entry<String, LedgerOrg> org : sampleOrgs.entrySet()) {
+            final LedgerOrg sampleOrg = org.getValue();
             final String orgName = org.getKey();
 
             String peerNames = sdkProperties.getProperty(fabricConfig.getIntegrationTestsOrg() + orgName + ".peer_locations");
@@ -175,12 +176,12 @@ public class FabricConfigManager {
                 location.replaceFirst("^http://", "https://") : location;
     }
 
-    Collection<SampleOrg> getIntegrationSampleOrgs() {
+    Collection<LedgerOrg> getIntegrationLedgerOrgs() {
         return Collections.unmodifiableCollection(sampleOrgs.values());
     }
 
 
-    public SampleOrg getIntegrationTestsSampleOrg(String name) {
+    public LedgerOrg getIntegrationTestsLedgerOrg(String name) {
         return sampleOrgs.get(name);
 
     }

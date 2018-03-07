@@ -31,7 +31,7 @@ public class LedgerStore {
     private final Map<String, LedgerUser> members = new HashMap<>();
 
 
-    LedgerStore(File file) {
+    public LedgerStore(File file) {
         this.file = file.getAbsolutePath();
     }
 

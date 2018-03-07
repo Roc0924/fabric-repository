@@ -3,9 +3,9 @@ package learning.blockchain.ledgeradmin.configs;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import learning.blockchain.ledgeradmin.dtos.SampleOrg;
-import learning.blockchain.ledgeradmin.dtos.SampleStore;
-import learning.blockchain.ledgeradmin.dtos.SampleUser;
+import learning.blockchain.ledgeradmin.entitys.LedgerOrg;
+import learning.blockchain.ledgeradmin.entitys.LedgerStore;
+import learning.blockchain.ledgeradmin.entitys.LedgerUser;
 import learning.blockchain.ledgeradmin.utils.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.sdk.*;
@@ -70,8 +70,8 @@ public class FabricAutoConfig {
         }
 
 
-        Collection<SampleOrg> sampleOrgs = fabricConfigManager.getIntegrationSampleOrgs();
-        for (SampleOrg sampleOrg : sampleOrgs) {
+        Collection<LedgerOrg> sampleOrgs = fabricConfigManager.getIntegrationLedgerOrgs();
+        for (LedgerOrg sampleOrg : sampleOrgs) {
             sampleOrg.setCAClient(HFCAClient.createNewInstance(sampleOrg.getCALocation(), sampleOrg.getCAProperties()));
         }
         File sampleStoreFile = new File(System.getProperty("java.io.tmpdir") + "/HFC.properties");
@@ -82,23 +82,23 @@ public class FabricAutoConfig {
             }
         }
 
-        final SampleStore sampleStore = new SampleStore(sampleStoreFile);
+        final LedgerStore sampleStore = new LedgerStore(sampleStoreFile);
 
 
-        for (SampleOrg sampleOrg : sampleOrgs) {
+        for (LedgerOrg sampleOrg : sampleOrgs) {
 
             HFCAClient ca = sampleOrg.getCAClient();
             final String orgName = sampleOrg.getName();
             final String mspid = sampleOrg.getMSPID();
             ca.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
-            SampleUser admin = sampleStore.getMember(fabricConfigManager.getFabricConfig().getAdminName(), orgName);
+            LedgerUser admin = sampleStore.getMember(fabricConfigManager.getFabricConfig().getAdminName(), orgName);
             if (!admin.isEnrolled()) {  //Preregistered admin only needs to be enrolled with Fabric caClient.
                 admin.setEnrollment(ca.enroll(admin.getName(), "adminpw"));
                 admin.setMspId(mspid);
             }
 
             sampleOrg.setAdmin(admin); // The admin of this org --
-            SampleUser user = sampleStore.getMember(fabricConfigManager.getFabricConfig().getUser1Name(), sampleOrg.getName());
+            LedgerUser user = sampleStore.getMember(fabricConfigManager.getFabricConfig().getUser1Name(), sampleOrg.getName());
 
 
             RegistrationRequest rr = new RegistrationRequest(user.getName(), "org1.department1");
@@ -140,7 +140,7 @@ public class FabricAutoConfig {
 
             // src/test/fixture/sdkintegration/e2e-2Orgs/channel/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/
 
-            SampleUser peerOrgAdmin = sampleStore.getMember(sampleOrgName + "Admin", sampleOrgName, sampleOrg.getMSPID(),
+            LedgerUser peerOrgAdmin = sampleStore.getMember(sampleOrgName + "Admin", sampleOrgName, sampleOrg.getMSPID(),
                     Util.findFileSk(Paths.get("fabric-admin\\target\\classes", fabricConfigManager.getFabricConfig().getChannelPath(),
                             fabricConfigManager.getFabricConfig().getPeerOrganizations(),
                             sampleOrgDomainName, format("/users/Admin@%s/msp/keystore", sampleOrgDomainName)).toFile()),
@@ -171,7 +171,7 @@ public class FabricAutoConfig {
     @Autowired
     public Channel channel(FabricConfigManager fabricConfigManager, HFClient client, FabricConfig config) throws InvalidArgumentException, TransactionException, ProposalException, IOException {
 
-        SampleOrg sampleOrg = fabricConfigManager.getIntegrationTestsSampleOrg("peerOrg1");
+        LedgerOrg sampleOrg = fabricConfigManager.getIntegrationTestsLedgerOrg("peerOrg1");
         String name = config.getFooChannelName();
 
         Channel newChannel = null;
@@ -184,7 +184,7 @@ public class FabricAutoConfig {
     }
 
 
-    private Channel reconstructChannel(FabricConfigManager fabricConfigManager, String name, HFClient client, SampleOrg sampleOrg) throws Exception {
+    private Channel reconstructChannel(FabricConfigManager fabricConfigManager, String name, HFClient client, LedgerOrg sampleOrg) throws Exception {
 
         client.setUserContext(sampleOrg.getPeerAdmin());
         Channel newChannel = client.newChannel(name);
@@ -221,7 +221,7 @@ public class FabricAutoConfig {
     }
 
     private Channel constructChannel(FabricConfigManager fabricConfigManager, HFClient client,
-                                     SampleOrg sampleOrg, String name) throws Exception {
+                                     LedgerOrg sampleOrg, String name) throws Exception {
 
 
         client.setUserContext(sampleOrg.getPeerAdmin());
