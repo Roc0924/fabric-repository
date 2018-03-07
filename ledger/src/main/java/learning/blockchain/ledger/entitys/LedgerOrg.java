@@ -1,4 +1,4 @@
-package learning.blockchain.ledger.dtos;
+package learning.blockchain.ledger.entitys;
 
 import org.hyperledger.fabric.sdk.Peer;
 import org.hyperledger.fabric.sdk.User;
@@ -9,11 +9,12 @@ import java.util.*;
 /**
  * Create with IntelliJ IDEA
  * Author               : wangzhenpeng
- * Date                 : 2018/2/13
- * Time                 : 15:54
+ * Date                 : 2018/3/7
+ * Time                 : 上午10:17
  * Description          : Organization Representation, Keeps track which resources are defined for the Organization it represents.
  */
-public class SampleOrg {
+
+public class LedgerOrg {
     final String name;
     final String mspid;
     HFCAClient caClient;
@@ -23,25 +24,23 @@ public class SampleOrg {
     Map<String, String> ordererLocations = new HashMap<>();
     Map<String, String> eventHubLocations = new HashMap<>();
     Set<Peer> peers = new HashSet<>();
-    private SampleUser admin;
+    private LedgerUser admin;
     private String caLocation;
     private Properties caProperties = null;
-
-    private SampleUser peerAdmin;
-
-
+    private LedgerUser peerAdmin;
     private String domainName;
 
-    public SampleOrg(String name, String mspid) {
+
+    public LedgerOrg(String name, String mspid) {
         this.name = name;
         this.mspid = mspid;
     }
 
-    public SampleUser getAdmin() {
+    public LedgerUser getAdmin() {
         return admin;
     }
 
-    public void setAdmin(SampleUser admin) {
+    public void setAdmin(LedgerUser admin) {
         this.admin = admin;
     }
 
@@ -117,7 +116,7 @@ public class SampleOrg {
         return name;
     }
 
-    public void addUser(SampleUser user) {
+    public void addUser(LedgerUser user) {
         userMap.put(user.getName(), user);
     }
 
@@ -150,11 +149,11 @@ public class SampleOrg {
     }
 
 
-    public SampleUser getPeerAdmin() {
+    public LedgerUser getPeerAdmin() {
         return peerAdmin;
     }
 
-    public void setPeerAdmin(SampleUser peerAdmin) {
+    public void setPeerAdmin(LedgerUser peerAdmin) {
         this.peerAdmin = peerAdmin;
     }
 

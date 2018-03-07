@@ -1,18 +1,4 @@
-/*
- *  Copyright 2016, 2017 DTCC, Fujitsu Australia Software Technology, IBM - All Rights Reserved.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *        http://www.apache.org/licenses/LICENSE-2.0
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-
-package learning.blockchain.ledger.dtos;
+package learning.blockchain.ledger.entitys;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -24,30 +10,28 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.hyperledger.fabric.sdk.Enrollment;
 
 import java.io.*;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Security;
-import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-
 /**
  * Create with IntelliJ IDEA
  * Author               : wangzhenpeng
- * Date                 : 2018/2/13
- * Time                 : 15:54
+ * Date                 : 2018/3/6
+ * Time                 : 下午10:48
  * Description          : A local file-based key value store.
  */
-public class SampleStore {
+
+public class LedgerStore {
+    private Log logger = LogFactory.getLog(LedgerStore.class);
 
     private String file;
-    private Log logger = LogFactory.getLog(SampleStore.class);
+    private final Map<String, LedgerUser> members = new HashMap<>();
 
-    public SampleStore(File file) {
 
+    public LedgerStore(File file) {
         this.file = file.getAbsolutePath();
     }
 
@@ -97,28 +81,28 @@ public class SampleStore {
         }
     }
 
-    private final Map<String, SampleUser> members = new HashMap<>();
-
     /**
      * Get the user with a given name
      * @param name
      * @param org
      * @return user
      */
-    public SampleUser getMember(String name, String org) {
+    public LedgerUser getMember(String name, String org) {
 
-        // Try to get the SampleUser state from the cache
-        SampleUser sampleUser = members.get(SampleUser.toKeyValStoreName(name, org));
-        if (null != sampleUser) {
-            return sampleUser;
+        // Try to get the LedgerUser state from the cache
+        LedgerUser ledgerUser = members.get(LedgerUser.toKeyValStoreName(name, org));
+        if (null != ledgerUser) {
+            return ledgerUser;
         }
 
-        // Create the SampleUser and try to restore it's state from the key value store (if found).
-        sampleUser = new SampleUser(name, org, this);
+        // Create the LedgerUser and try to restore it's state from the key value store (if found).
+        ledgerUser = new LedgerUser(name, org, this);
 
-        return sampleUser;
+        return ledgerUser;
 
     }
+
+
 
     /**
      * Get the user with a given name
@@ -129,58 +113,44 @@ public class SampleStore {
      * @param certificateFile
      * @return user
      * @throws IOException
-     * @throws NoSuchAlgorithmException
-     * @throws NoSuchProviderException
-     * @throws InvalidKeySpecException
      */
-    public SampleUser getMember(String name, String org, String mspId, File privateKeyFile,
-                                File certificateFile) throws IOException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
+    public LedgerUser getMember(String name, String org, String mspId, File privateKeyFile,
+                                File certificateFile) throws IOException {
 
         try {
-            // Try to get the SampleUser state from the cache
-            SampleUser sampleUser = members.get(SampleUser.toKeyValStoreName(name, org));
-            if (null != sampleUser) {
-                return sampleUser;
+            // Try to get the LedgerUser state from the cache
+            LedgerUser ledgerUser = members.get(LedgerUser.toKeyValStoreName(name, org));
+            if (null != ledgerUser) {
+                return ledgerUser;
             }
 
-            // Create the SampleUser and try to restore it's state from the key value store (if found).
-            sampleUser = new SampleUser(name, org, this);
-            sampleUser.setMspId(mspId);
+            // Create the LedgerUser and try to restore it's state from the key value store (if found).
+            ledgerUser = new LedgerUser(name, org, this);
+            ledgerUser.setMspId(mspId);
 
             String certificate = new String(IOUtils.toByteArray(new FileInputStream(certificateFile)), "UTF-8");
 
             PrivateKey privateKey = getPrivateKeyFromBytes(IOUtils.toByteArray(new FileInputStream(privateKeyFile)));
 
-            sampleUser.setEnrollment(new SampleStoreEnrollement(privateKey, certificate));
+            ledgerUser.setEnrollment(new LedgerStore.SampleStoreEnrollement(privateKey, certificate));
 
-            sampleUser.saveState();
+            ledgerUser.saveState();
 
-            return sampleUser;
-        } catch (IOException e) {
+            return ledgerUser;
+        } catch (IOException | ClassCastException e) {
             e.printStackTrace();
             throw e;
 
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            throw e;
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-            throw e;
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-            throw e;
-        } catch (ClassCastException e) {
-            e.printStackTrace();
-            throw e;
         }
 
     }
+
 
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    static PrivateKey getPrivateKeyFromBytes(byte[] data) throws IOException, NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
+    static PrivateKey getPrivateKeyFromBytes(byte[] data) throws IOException{
         final Reader pemReader = new StringReader(new String(data));
 
         final PrivateKeyInfo pemPair;
@@ -195,7 +165,7 @@ public class SampleStore {
 
     static final class SampleStoreEnrollement implements Enrollment, Serializable {
 
-        private static final long serialVersionUID = -2784835212445309006L;
+        private static final long serialVersionUID = -7077068549994159470L;
         private final PrivateKey privateKey;
         private final String certificate;
 
@@ -220,5 +190,6 @@ public class SampleStore {
         }
 
     }
+
 
 }

@@ -1,11 +1,11 @@
 package learning.blockchain.ledger.services;
 
 import com.google.protobuf.ByteString;
-import learning.chaincode.demo.configs.FabricConfig;
-import learning.chaincode.demo.configs.FabricConfigManager;
-import learning.chaincode.demo.dtos.Record;
-import learning.chaincode.demo.dtos.SampleOrg;
-import learning.chaincode.demo.dtos.TransactionRsp;
+import learning.blockchain.ledger.configs.FabricConfig;
+import learning.blockchain.ledger.configs.FabricConfigManager;
+import learning.blockchain.ledger.entitys.LedgerOrg;
+import learning.blockchain.ledger.entitys.Record;
+import learning.blockchain.ledger.entitys.TransactionRsp;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.sdk.*;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
@@ -53,14 +53,14 @@ public class FabricService {
     }
 
 
-    public SampleOrg getOrg(String orgName) {
-        return fabricConfigManager.getIntegrationTestsSampleOrg(orgName);
+    public LedgerOrg getOrg(String orgName) {
+        return fabricConfigManager.getIntegrationTestsLedgerOrg(orgName);
     }
 
 
 
-    public TransactionRsp transaction(Channel channel, HFClient client, SampleOrg sampleOrg,
-                            ChaincodeID chaincodeID, String source, String destination, String delta) {
+    public TransactionRsp transaction(Channel channel, HFClient client, LedgerOrg sampleOrg,
+                                      ChaincodeID chaincodeID, String source, String destination, String delta) {
         Collection<ProposalResponse> successful = new ArrayList<>();
         String transactionID = null;
         try {

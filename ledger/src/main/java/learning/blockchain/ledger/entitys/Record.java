@@ -1,4 +1,4 @@
-package learning.blockchain.ledger.dtos;
+package learning.blockchain.ledger.entitys;
 
 import lombok.Data;
 

@@ -1,15 +1,12 @@
 package learning.blockchain.ledger.controllers;
 
-import learning.chaincode.demo.configs.InstalledProposal;
-import learning.chaincode.demo.dtos.Record;
-import learning.chaincode.demo.dtos.SampleOrg;
-import learning.chaincode.demo.dtos.TransactionRsp;
-import learning.chaincode.demo.services.FabricService;
+import learning.blockchain.ledger.entitys.LedgerOrg;
+import learning.blockchain.ledger.entitys.Record;
+import learning.blockchain.ledger.entitys.TransactionRsp;
+import learning.blockchain.ledger.services.FabricService;
 import org.hyperledger.fabric.sdk.ChaincodeID;
 import org.hyperledger.fabric.sdk.Channel;
 import org.hyperledger.fabric.sdk.HFClient;
-import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
-import org.hyperledger.fabric.sdk.exception.ProposalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -49,7 +46,7 @@ public class FabricController {
     public TransactionRsp transaction(@RequestParam(name = "source") String source,
                                       @RequestParam(name = "destination") String destination,
                                       @RequestParam(name = "delta") String delta) {
-        SampleOrg org = fabricService.getOrg("peerOrg1");
+        LedgerOrg org = fabricService.getOrg("peerOrg1");
         return fabricService.transaction(channel, hfClient, org, chaincodeID, source, destination, delta);
     }
 
