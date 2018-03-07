@@ -1,7 +1,7 @@
 package learning.blockchain.ledgeradmin.entitys;
 
+import io.netty.util.internal.StringUtil;
 import learning.blockchain.ledgeradmin.dtos.SampleStore;
-import learning.blockchain.ledgeradmin.dtos.SampleUser;
 import org.bouncycastle.util.encoders.Hex;
 import org.hyperledger.fabric.sdk.Enrollment;
 import org.hyperledger.fabric.sdk.User;
@@ -26,6 +26,8 @@ public class LedgerUser implements User, Serializable{
     private String affiliation;
     private String organization;
     private String enrollmentSecret;
+
+    String mspId;
     Enrollment enrollment = null;
 
     private transient SampleStore keyValStore;
@@ -47,36 +49,80 @@ public class LedgerUser implements User, Serializable{
 
     @Override
     public String getName() {
-        return null;
+        return this.name;
     }
 
     @Override
     public Set<String> getRoles() {
-        return null;
+        return this.roles;
+    }
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
+        saveState();
     }
 
     @Override
     public String getAccount() {
-        return null;
+        return this.account;
+    }
+    public void setAccount(String account) {
+        this.account = account;
+        saveState();
     }
 
     @Override
     public String getAffiliation() {
-        return null;
+        return this.affiliation;
+    }
+
+    public void setAffiliation(String affiliation) {
+        this.affiliation = affiliation;
+        saveState();
     }
 
     @Override
     public Enrollment getEnrollment() {
-        return null;
+        return this.enrollment;
+    }
+    public void setEnrollment(Enrollment enrollment) {
+        this.enrollment = enrollment;
+        saveState();
     }
 
     @Override
     public String getMspId() {
-        return null;
+        return this.mspId;
+    }
+    public void setMspId(String mspId) {
+        this.mspId = mspId;
+        saveState();
+    }
+
+    public String getEnrollmentSecret() {
+        return this.enrollmentSecret;
+    }
+    public void setEnrollmentSecret(String enrollmentSecret) {
+        this.enrollmentSecret = enrollmentSecret;
+        saveState();
     }
 
     public static String toKeyValStoreName(String name, String org) {
         return "user." + name + org;
+    }
+
+
+    /**
+     * Determine whether the name has registered
+     */
+    public boolean isRegistered() {
+        return !StringUtil.isNullOrEmpty(this.enrollmentSecret);
+    }
+
+    /**
+     * Determine whether the name has enrolled
+     */
+    public boolean isEnrolled() {
+        return this.enrollment != null;
     }
 
     /**
@@ -98,7 +144,7 @@ public class LedgerUser implements User, Serializable{
     /**
      * Restore the state of this user from the key value store (if found).  If not found, do nothing.
      */
-    SampleUser restoreState() {
+    LedgerUser restoreState() {
         String memberStr = keyValStore.getValue(keyValStoreName);
         if (null != memberStr) {
             // The user was found in the key value store, so restore the
@@ -107,7 +153,7 @@ public class LedgerUser implements User, Serializable{
             ByteArrayInputStream bis = new ByteArrayInputStream(serialized);
             try {
                 ObjectInputStream ois = new ObjectInputStream(bis);
-                SampleUser state = (SampleUser) ois.readObject();
+                LedgerUser state = (LedgerUser) ois.readObject();
                 if (state != null) {
                     this.name = state.name;
                     this.roles = state.roles;
