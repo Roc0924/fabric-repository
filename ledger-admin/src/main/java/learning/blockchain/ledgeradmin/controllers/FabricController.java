@@ -1,7 +1,7 @@
 package learning.blockchain.ledgeradmin.controllers;
 
 
-import learning.blockchain.ledgeradmin.dtos.ChainCodeDto;
+import learning.blockchain.ledgeradmin.entitys.ChainCodeDto;
 import learning.blockchain.ledgeradmin.services.FabricService;
 import org.hyperledger.fabric.sdk.ChaincodeID;
 import org.springframework.beans.factory.annotation.Autowired;
