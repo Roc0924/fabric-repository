@@ -1,0 +1,63 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>learning.blockchain</groupId>
+  <artifactId>learning-blockchain-starter-ledger</artifactId>
+  <version>1.0.0.RELEASE</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <packaging>jar</packaging>
+
+  <name>learning-blockchain-starter-ledger</name>
+  <url>http://maven.apache.org</url>
+  <developers>
+    <developer>
+      <name>wangzhenpeng</name>
+      <email>wangzhenpeng0924@163.com</email>
+      <organization>GOME</organization>
+    </developer>
+  </developers>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId> org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+      <version>2.0.0.RELEASE</version>
+    </dependency>
+
+    <!-- 支持 @ConfigurationProperties 注解 -->
+    <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-configuration-processor -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-configuration-processor</artifactId>
+        <version>2.0.0.RELEASE</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/com.github.xuanyue202/fabric-sdk-java -->
+    <dependency>
+      <groupId>org.hyperledger.fabric-sdk-java</groupId>
+      <artifactId>fabric-sdk-java</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
