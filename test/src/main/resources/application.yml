@@ -1,0 +1,48 @@
+ledger:
+  orgs:
+    org1:
+      name: org1
+      mspId: Org1MSP
+      domname: org1.example.com
+      caLocation: http://192.168.95.143:7054
+      peers:
+        - name: peer0.org1.example.com
+          url: grpc://192.168.95.143:7051
+        - name: peer1.org1.example.com
+          url: grpc://192.168.95.143:7056
+#      peerLocations: peer0.org1.example.com@grpc://192.168.95.143:7051, peer1.org1.example.com@grpc://192.168.95.143:7056
+      ordererLocations: orderer.example.com@grpc://192.168.95.143:7050
+      eventHubLocations: peer0.org1.example.com@grpc://192.168.95.143:7053,peer1.org1.example.com@grpc://192.168.95.143:7058
+    org2:
+      name: org2
+      mspId: Org2MSP
+      domname: org2.example.com
+      caLocation: http://192.168.95.143:8054
+      peerLocations: peer0.org1.example.com@grpc://192.168.95.143:7051, peer1.org1.example.com@grpc://192.168.95.143:7056
+      ordererLocations: orderer.example.com@grpc://192.168.95.143:7050
+      eventHubLocations: peer0.org1.example.com@grpc://192.168.95.143:7053,peer1.org1.example.com@grpc://192.168.95.143:7058
+  userList:
+    - name: admin
+      secret:
+    - name: user1
+      secret: user1
+  channelList:
+    - name: foo
+      path: e2e-2Orgs/channel
+    - name: bar
+      path: e2e-2Orgs/channel
+  chaincodeList:
+    - name: rebare_cc
+      path: demo/target/classes
+      version: 1
+  times:
+    gossipWaitTime: 500000
+    invokeWaitTime: 10000000
+    deployWaitTime: 12000000
+    proposalWaitTime: 12000000
+  runWithTls: true
+  cryptoConfigPath: crypto-config/peerOrganizations/
+
+server:
+  port: 8081
+debug: false
