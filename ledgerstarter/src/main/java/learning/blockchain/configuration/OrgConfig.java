@@ -15,9 +15,9 @@ public class OrgConfig {
     private String mspId;
     private String domName;
     private String caLocation;
-    private List<PeerCofnig> peers;
-    private String ordererLocations;
-    private String eventHubLocations;
+    private List<PeerConfig> peers;
+    private List<OrdererConfig> orderers;
+    private List<EventHubConfig> eventHubs;
 
     public String getName() {
         return name;
@@ -51,27 +51,27 @@ public class OrgConfig {
         this.caLocation = caLocation;
     }
 
-    public String getOrdererLocations() {
-        return ordererLocations;
-    }
-
-    public void setOrdererLocations(String ordererLocations) {
-        this.ordererLocations = ordererLocations;
-    }
-
-    public String getEventHubLocations() {
-        return eventHubLocations;
-    }
-
-    public void setEventHubLocations(String eventHubLocations) {
-        this.eventHubLocations = eventHubLocations;
-    }
-
-    public List<PeerCofnig> getPeers() {
+    public List<PeerConfig> getPeers() {
         return peers;
     }
 
-    public void setPeers(List<PeerCofnig> peers) {
+    public void setPeers(List<PeerConfig> peers) {
         this.peers = peers;
+    }
+
+    public List<OrdererConfig> getOrderers() {
+        return orderers;
+    }
+
+    public void setOrderers(List<OrdererConfig> orderers) {
+        this.orderers = orderers;
+    }
+
+    public List<EventHubConfig> getEventHubs() {
+        return eventHubs;
+    }
+
+    public void setEventHubs(List<EventHubConfig> eventHubs) {
+        this.eventHubs = eventHubs;
     }
 }

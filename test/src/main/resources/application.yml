@@ -11,16 +11,37 @@ ledger:
         - name: peer1.org1.example.com
           url: grpc://192.168.95.143:7056
 #      peerLocations: peer0.org1.example.com@grpc://192.168.95.143:7051, peer1.org1.example.com@grpc://192.168.95.143:7056
-      ordererLocations: orderer.example.com@grpc://192.168.95.143:7050
-      eventHubLocations: peer0.org1.example.com@grpc://192.168.95.143:7053,peer1.org1.example.com@grpc://192.168.95.143:7058
+      orderers:
+        - name: orderer.example.com
+          url: grpc://192.168.95.143:7050
+#      ordererLocations: orderer.example.com@grpc://192.168.95.143:7050
+      eventHubs:
+        - name: peer0.org1.example.com
+          url: grpc://192.168.95.143:7053
+        - name: peer1.org1.example.com
+          url: grpc://192.168.95.143:7058
+#      eventHubLocations: peer0.org1.example.com@grpc://192.168.95.143:7053,peer1.org1.example.com@grpc://192.168.95.143:7058
     org2:
       name: org2
       mspId: Org2MSP
       domname: org2.example.com
       caLocation: http://192.168.95.143:8054
-      peerLocations: peer0.org1.example.com@grpc://192.168.95.143:7051, peer1.org1.example.com@grpc://192.168.95.143:7056
-      ordererLocations: orderer.example.com@grpc://192.168.95.143:7050
-      eventHubLocations: peer0.org1.example.com@grpc://192.168.95.143:7053,peer1.org1.example.com@grpc://192.168.95.143:7058
+      peers:
+        - name: peer0.org2.example.com
+          url: grpc://192.168.95.143:8051
+        - name: peer1.org2.example.com
+          url: grpc://192.168.95.143:8056
+#      peerLocations: peer0.org1.example.com@grpc://192.168.95.143:7051, peer1.org1.example.com@grpc://192.168.95.143:7056
+      orderers:
+        - name: orderer.example.com
+          url: grpc://192.168.95.143:7050
+#      ordererLocations: orderer.example.com@grpc://192.168.95.143:7050
+      eventHubs:
+        - name: peer0.org2.example.com
+          url: grpc://192.168.95.143:8053
+        - name: peer1.org2.example.com
+          url: grpc://192.168.95.143:8058
+#      eventHubLocations: peer0.org1.example.com@grpc://192.168.95.143:7053,peer1.org1.example.com@grpc://192.168.95.143:7058
   userList:
     - name: admin
       secret:
@@ -40,7 +61,7 @@ ledger:
     invokeWaitTime: 10000000
     deployWaitTime: 12000000
     proposalWaitTime: 12000000
-  runWithTls: true
+  runWithTls: false
   cryptoConfigPath: crypto-config/peerOrganizations/
 
 server:
