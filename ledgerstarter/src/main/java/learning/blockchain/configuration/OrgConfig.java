@@ -1,5 +1,7 @@
 package learning.blockchain.configuration;
 
+import java.util.List;
+
 /**
  * Create with IntelliJ IDEA
  * Author               : wangzhenpeng
@@ -13,7 +15,7 @@ public class OrgConfig {
     private String mspId;
     private String domName;
     private String caLocation;
-    private String peerLocations;
+    private List<PeerCofnig> peers;
     private String ordererLocations;
     private String eventHubLocations;
 
@@ -49,14 +51,6 @@ public class OrgConfig {
         this.caLocation = caLocation;
     }
 
-    public String getPeerLocations() {
-        return peerLocations;
-    }
-
-    public void setPeerLocations(String peerLocations) {
-        this.peerLocations = peerLocations;
-    }
-
     public String getOrdererLocations() {
         return ordererLocations;
     }
@@ -71,5 +65,13 @@ public class OrgConfig {
 
     public void setEventHubLocations(String eventHubLocations) {
         this.eventHubLocations = eventHubLocations;
+    }
+
+    public List<PeerCofnig> getPeers() {
+        return peers;
+    }
+
+    public void setPeers(List<PeerCofnig> peers) {
+        this.peers = peers;
     }
 }
