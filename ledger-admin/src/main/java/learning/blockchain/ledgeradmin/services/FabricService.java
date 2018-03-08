@@ -1,7 +1,10 @@
 package learning.blockchain.ledgeradmin.services;
 
 
+import learning.blockchain.ledgeradmin.configs.FabricConfig;
+import learning.blockchain.ledgeradmin.configs.FabricConfigManager;
 import learning.blockchain.ledgeradmin.entitys.ChainCodeDto;
+import learning.blockchain.ledgeradmin.entitys.LedgerOrg;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.protos.peer.Query;
 import org.hyperledger.fabric.sdk.*;
@@ -63,7 +66,7 @@ public class FabricService {
 
 
 
-        SampleOrg sampleOrg = fabricConfigManager.getIntegrationTestsSampleOrg("peerOrg1");
+        LedgerOrg sampleOrg = fabricConfigManager.getIntegrationTestsLedgerOrg("peerOrg1");
 
         ChainCodeDto chainCodeDto = queryInstalledChainCodeByName(chaincodeID.getName());
         if (null != chainCodeDto) {
@@ -217,7 +220,7 @@ public class FabricService {
     }
 
 
-    public ChainCodeDto upgradeChainCode(ChaincodeID chaincodeID, SampleOrg sampleOrg) {
+    public ChainCodeDto upgradeChainCode(ChaincodeID chaincodeID, LedgerOrg sampleOrg) {
         ChainCodeDto installedChainCodeDto = queryInstalledChainCodeByName(chaincodeID.getName());
         try {
             UpgradeProposalRequest upgradeProposalRequest = hfClient.newUpgradeProposalRequest();
@@ -262,7 +265,7 @@ public class FabricService {
     }
 
     public ChainCodeDto upgradeInstalledChaincode(ChaincodeID newChaincodeID) {
-        SampleOrg sampleOrg = fabricConfigManager.getIntegrationTestsSampleOrg("peerOrg1");
+        LedgerOrg sampleOrg = fabricConfigManager.getIntegrationTestsLedgerOrg("peerOrg1");
         return upgradeChainCode(newChaincodeID, sampleOrg);
     }
 
