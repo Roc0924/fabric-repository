@@ -29,7 +29,7 @@ public class LedgerUser implements User, Serializable{
     String mspId;
     Enrollment enrollment = null;
 
-    private transient SampleStore keyValStore;
+    private transient LedgerStore keyValStore;
     private String keyValStoreName;
 
 
