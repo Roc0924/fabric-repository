@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Paths;
 
 import static java.lang.String.format;
@@ -75,7 +77,7 @@ public class UserService {
             LedgerUser peerOrgAdmin = ledgerStore.getMember(orgName + "Admin", orgName, ledgerOrg.getMSPID(),
                     Util.findFileSk(
                             Paths.get(
-                                    "fabric-admin\\target\\classes",
+                                    this.getClass().getResource("/").getPath(),
                                     channelPath,
                                     cryptoConfigPath,
                                     ledgerOrg.getDomainName(),
@@ -86,7 +88,7 @@ public class UserService {
                             ).toFile()
                     ),
                     Paths.get(
-                            "fabric-admin\\target\\classes",
+                            this.getClass().getResource("/").getPath(),
                             channelPath,
                             cryptoConfigPath,
                             ledgerOrg.getDomainName(),

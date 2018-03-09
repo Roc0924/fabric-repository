@@ -82,8 +82,11 @@ public class Util {
 
     public static File findFileSk(File directory) {
 
+
         File[] matches = directory.listFiles((dir, name) -> name.endsWith("_sk"));
 
+        File file = new File("");
+        File test = file.getAbsoluteFile();
         if (null == matches) {
             throw new RuntimeException(format("Matches returned null does %s directory exist?", directory.getAbsoluteFile().getName()));
         }
