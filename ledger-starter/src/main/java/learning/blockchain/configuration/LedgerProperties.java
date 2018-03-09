@@ -18,7 +18,7 @@ public class LedgerProperties {
 
     private Map<String, OrgConfig> orgs;                    // 组织
     private List<Map<String, String>> userList;             // 用户列表
-    private List<Map<String, String>> channelList;          // 频道列表
+    private List<ChannelConfig> channelList;                // 频道列表
     private String channelPath;                             // 频道路径
     private List<Map<String, String>> chainCodeList;        // 智能合约列表
     private List<String> times;                             // 时间
@@ -42,11 +42,11 @@ public class LedgerProperties {
         this.userList = userList;
     }
 
-    public List<Map<String, String>> getChannelList() {
+    public List<ChannelConfig> getChannelList() {
         return channelList;
     }
 
-    public void setChannelList(List<Map<String, String>> channelList) {
+    public void setChannelList(List<ChannelConfig> channelList) {
         this.channelList = channelList;
     }
 

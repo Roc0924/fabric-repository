@@ -1,9 +1,14 @@
 package learning.blockchain.configuration;
 
 import learning.blockchain.entitys.LedgerOrg;
-import org.hyperledger.fabric.sdk.HFClient;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
+import org.hyperledger.fabric.sdk.*;
 import org.hyperledger.fabric.sdk.exception.CryptoException;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
+import org.hyperledger.fabric.sdk.exception.ProposalException;
+import org.hyperledger.fabric.sdk.exception.TransactionException;
 import org.hyperledger.fabric.sdk.helper.Utils;
 import org.hyperledger.fabric.sdk.security.CryptoSuite;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +19,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.awt.*;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Create with IntelliJ IDEA
@@ -32,6 +37,9 @@ import java.util.Properties;
 @ConditionalOnClass({HFClient.class, LedgerChannels.class})
 @ConditionalOnProperty(prefix = "ledger", value = "enable", matchIfMissing = true)
 public class LedgerAutoConfiguration {
+
+    Logger logger = Logger.getLogger(LedgerAutoConfiguration.class);
+
     final LedgerProperties ledgerProperties;
 
     @Autowired
@@ -55,8 +63,9 @@ public class LedgerAutoConfiguration {
 
 
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(LedgerOrgs.class)
-    public LedgerOrgs ledgerOrgs() {
+    public LedgerOrgs ledgerOrgs(LedgerProperties ledgerProperties) {
         LedgerOrgs ledgerOrgs = new LedgerOrgs();
         Map<String, LedgerOrg> ledgerOrgMap = new HashMap<>();
 
@@ -113,23 +122,131 @@ public class LedgerAutoConfiguration {
 
 
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(LedgerChannels.class)
-    public LedgerChannels channels() {
+    public LedgerChannels channels(HFClient hfClient, LedgerProperties ledgerProperties, LedgerOrgs ledgerOrgs) {
         LedgerChannels ledgerChannels = new LedgerChannels();
 
+        List<ChannelConfig> channelList = ledgerProperties.getChannelList();
 
 
+        try {
+            for (ChannelConfig channelConfig : channelList) {
+                Channel channel = null;
+                LedgerOrg ledgerOrg = ledgerOrgs.getLedgerOrgs().get(channelConfig.getOrgName());
 
+                channel = reconstructChannel(channelConfig.getName(), hfClient, ledgerOrg);
 
+                ledgerChannels.getChannels().put(channelConfig.getName(), channel);
 
-
-
-
-
-
-
+            }
+        } catch (InvalidArgumentException | ProposalException | TransactionException | IOException e) {
+            e.printStackTrace();
+        }
 
         return ledgerChannels;
+    }
+
+    private Channel reconstructChannel(String name, HFClient hfClient, LedgerOrg ledgerOrg)
+            throws InvalidArgumentException, TransactionException, ProposalException, IOException {
+
+        hfClient.setUserContext(ledgerOrg.getPeerAdmin());
+        Channel newChannel = hfClient.newChannel(name);
+
+        for (String orderName : ledgerOrg.getOrdererNames()) {
+            newChannel.addOrderer(hfClient.newOrderer(orderName, ledgerOrg.getOrdererLocation(orderName),
+                    getOrdererProperties(orderName, ledgerOrg.getDomainName())));
+        }
+
+        for (String peerName : ledgerOrg.getPeerNames()) {
+            String peerLocation = ledgerOrg.getPeerLocation(peerName);
+            Peer peer = hfClient.newPeer(peerName, peerLocation, getPeerProperties(peerName, ledgerOrg.getDomainName()));
+
+            //Query the actual peer for which channels it belongs to and check it belongs to this channel
+            Set<String> channels = hfClient.queryChannels(peer);
+            if (!channels.contains(name)) {
+                logger.warn("Peer " + peerName + " does not appear to belong to channel " + name);
+                return constructChannel(name, hfClient, ledgerOrg, ledgerOrg.getDomainName());
+            }
+
+            newChannel.addPeer(peer);
+            ledgerOrg.addPeer(peer);
+        }
+
+        for (String eventHubName : ledgerOrg.getEventHubNames()) {
+            EventHub eventHub = hfClient.newEventHub(eventHubName, ledgerOrg.getEventHubLocation(eventHubName),
+                    getEventHubProperties(eventHubName, ledgerOrg.getDomainName()));
+            newChannel.addEventHub(eventHub);
+        }
+
+        newChannel.initialize();
+
+        return newChannel;
+    }
+
+    private Channel constructChannel(String name, HFClient hfClient, LedgerOrg ledgerOrg, String domainName)
+            throws InvalidArgumentException, IOException, TransactionException, ProposalException {
+
+        Collection<Orderer> orderers = new LinkedList<>();
+
+        for (String orderName : ledgerOrg.getOrdererNames()) {
+
+            Properties ordererProperties = getOrdererProperties(orderName, domainName);
+
+            //example of setting keepAlive to avoid timeouts on inactive http2 connections.
+            // Under 5 minutes would require changes to server side to accept faster ping rates.
+            ordererProperties.put("grpc.NettyChannelBuilderOption.keepAliveTime", new Object[] {5L, TimeUnit.MINUTES});
+            ordererProperties.put("grpc.NettyChannelBuilderOption.keepAliveTimeout", new Object[] {8L, TimeUnit.SECONDS});
+
+            orderers.add(hfClient.newOrderer(orderName, ledgerOrg.getOrdererLocation(orderName),
+                    ordererProperties));
+        }
+
+        //Just pick the first orderer in the list to create the channel.
+        Orderer anOrderer = orderers.iterator().next();
+        orderers.remove(anOrderer);
+
+        ChannelConfiguration channelConfiguration = new ChannelConfiguration(new File(this.getClass().getResource("/").getPath() + "/e2e-2Orgs/channel/" + name + ".tx"));
+
+        //Create channel that has only one signer that is this orgs peer admin. If channel creation policy needed more signature they would need to be added too.
+        Channel newChannel = hfClient.newChannel(name, anOrderer, channelConfiguration, hfClient.getChannelConfigurationSignature(channelConfiguration, ledgerOrg.getPeerAdmin()));
+
+        //client
+        for (String peerName : ledgerOrg.getPeerNames()) {
+            String peerLocation = ledgerOrg.getPeerLocation(peerName);
+
+            Properties peerProperties = getPeerProperties(peerName, domainName); //test properties for peer.. if any.
+            if (peerProperties == null) {
+                peerProperties = new Properties();
+            }
+            //Example of setting specific options on grpc's NettyChannelBuilder
+            peerProperties.put("grpc.NettyChannelBuilderOption.maxInboundMessageSize", 9000000);
+
+            Peer peer = hfClient.newPeer(peerName, peerLocation, peerProperties);
+            newChannel.joinPeer(peer);
+            ledgerOrg.addPeer(peer);
+        }
+
+        for (Orderer orderer : orderers) { //add remaining orderers if any.
+            newChannel.addOrderer(orderer);
+        }
+
+        for (String eventHubName : ledgerOrg.getEventHubNames()) {
+
+            final Properties eventHubProperties = getEventHubProperties(eventHubName, domainName);
+
+            eventHubProperties.put("grpc.NettyChannelBuilderOption.keepAliveTime", new Object[] {5L, TimeUnit.MINUTES});
+            eventHubProperties.put("grpc.NettyChannconfigelBuilderOption.keepAliveTimeout", new Object[] {8L, TimeUnit.SECONDS});
+
+            EventHub eventHub = hfClient.newEventHub(eventHubName, ledgerOrg.getEventHubLocation(eventHubName),
+                    eventHubProperties);
+            newChannel.addEventHub(eventHub);
+        }
+
+        newChannel.initialize();
+
+
+        return newChannel;
     }
 
 
@@ -157,6 +274,41 @@ public class LedgerAutoConfiguration {
         url = url.trim();
 
         return ledgerProperties.isRunWithTls() ? url.replaceFirst("^http://", "https://") : url;
+    }
+
+
+
+    private Properties getOrdererProperties(String orderName, String domainName) {
+        return getEndPointProperties("orderer", orderName, domainName);
+    }
+
+    private Properties getPeerProperties(String peerName, String domainName) {
+        return getEndPointProperties("peer", peerName, domainName);
+    }
+
+    private Properties getEventHubProperties(String eventHubName, String domainName) {
+        return getEndPointProperties("peer", eventHubName, domainName);
+    }
+
+    private Properties getEndPointProperties(final String type, final String name, final String domainName) {
+
+//        final String domainName = getDomainName(name);
+
+        File cert = Paths.get(this.getClass().getResource("/").getPath(), "e2e-2Orgs/channel/crypto-config/ordererOrganizations".replace("orderer", type), domainName, type + "s",
+                name, "tls/server.crt").toFile();
+        if (!cert.exists()) {
+            throw new RuntimeException(String.format("Missing cert file for: %s. Could not find at location: %s", name,
+                    cert.getAbsolutePath()));
+        }
+
+        Properties ret = new Properties();
+        ret.setProperty("pemFile", cert.getAbsolutePath());
+        //      ret.setProperty("trustServerCertificate", "true"); //testing environment only NOT FOR PRODUCTION!
+        ret.setProperty("hostnameOverride", name);
+        ret.setProperty("sslProvider", "openSSL");
+        ret.setProperty("negotiationType", "TLS");
+
+        return ret;
     }
 
 
