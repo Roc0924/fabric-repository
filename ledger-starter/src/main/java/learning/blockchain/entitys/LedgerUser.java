@@ -29,15 +29,16 @@ public class LedgerUser implements User, Serializable{
     String mspId;
     Enrollment enrollment = null;
 
-    private transient LedgerStore keyValStore;
+    private transient LedgerStore ledgerStore;
     private String keyValStoreName;
 
 
     LedgerUser(String name, String ledgerOrg, LedgerStore ledgerStore) {
         this.name = name;
         this.organization = ledgerOrg;
+        this.ledgerStore = ledgerStore;
         this.keyValStoreName = toKeyValStoreName(this.name, ledgerOrg);
-        String memberStr = keyValStore.getValue(keyValStoreName);
+        String memberStr = this.ledgerStore.getValue(keyValStoreName);
         if (null == memberStr) {
             saveState();
         } else {
@@ -133,7 +134,7 @@ public class LedgerUser implements User, Serializable{
             ObjectOutputStream oos = new ObjectOutputStream(bos);
             oos.writeObject(this);
             oos.flush();
-            keyValStore.setValue(keyValStoreName, Hex.toHexString(bos.toByteArray()));
+            ledgerStore.setValue(keyValStoreName, Hex.toHexString(bos.toByteArray()));
             bos.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -144,7 +145,7 @@ public class LedgerUser implements User, Serializable{
      * Restore the state of this user from the key value store (if found).  If not found, do nothing.
      */
     LedgerUser restoreState() {
-        String memberStr = keyValStore.getValue(keyValStoreName);
+        String memberStr = ledgerStore.getValue(keyValStoreName);
         if (null != memberStr) {
             // The user was found in the key value store, so restore the
             // state.

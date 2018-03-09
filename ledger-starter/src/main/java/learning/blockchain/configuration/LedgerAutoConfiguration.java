@@ -50,9 +50,6 @@ public class LedgerAutoConfiguration {
             e.printStackTrace();
         }
 
-        OrgConfig orgConfig = ledgerProperties.getOrgs().get("org1");
-        System.out.println(orgConfig);
-
         return hfClient;
     }
 

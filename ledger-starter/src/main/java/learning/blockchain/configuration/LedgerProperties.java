@@ -19,10 +19,12 @@ public class LedgerProperties {
     private Map<String, OrgConfig> orgs;                    // 组织
     private List<Map<String, String>> userList;             // 用户列表
     private List<Map<String, String>> channelList;          // 频道列表
+    private String channelPath;                             // 频道路径
     private List<Map<String, String>> chainCodeList;        // 智能合约列表
     private List<String> times;                             // 时间
     private boolean runWithTls;                             // 是否开启tls
     private String cryptoConfigPath;                        // crypto配置路径
+
 
     public Map<String, OrgConfig> getOrgs() {
         return orgs;
@@ -46,6 +48,14 @@ public class LedgerProperties {
 
     public void setChannelList(List<Map<String, String>> channelList) {
         this.channelList = channelList;
+    }
+
+    public String getChannelPath() {
+        return channelPath;
+    }
+
+    public void setChannelPath(String channelPath) {
+        this.channelPath = channelPath;
     }
 
     public List<Map<String, String>> getChainCodeList() {
