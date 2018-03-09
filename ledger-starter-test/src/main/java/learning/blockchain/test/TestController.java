@@ -16,12 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class TestController {
-//    final HFClient hfClient;
-//
-//    @Autowired
-//    public TestController(HFClient hfClient) {
-//        this.hfClient = hfClient;
-//    }
 
     final HFClient hfClient;
     final LedgerOrgs ledgerOrgs;
