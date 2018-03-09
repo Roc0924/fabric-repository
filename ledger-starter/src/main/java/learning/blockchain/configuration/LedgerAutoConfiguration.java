@@ -14,6 +14,8 @@ import org.hyperledger.fabric.sdk.exception.ProposalException;
 import org.hyperledger.fabric.sdk.exception.TransactionException;
 import org.hyperledger.fabric.sdk.helper.Utils;
 import org.hyperledger.fabric.sdk.security.CryptoSuite;
+import org.hyperledger.fabric_ca.sdk.HFCAClient;
+import org.hyperledger.fabric_ca.sdk.exception.EnrollmentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -120,7 +123,9 @@ public class LedgerAutoConfiguration {
 
 
 
-            // set peerAdmain
+
+
+
             try {
                 File ledgerStoreFile = new File(System.getProperty("java.io.tmpdir") + "/HFC.properties");
                 if (ledgerStoreFile.exists()) {
@@ -131,6 +136,27 @@ public class LedgerAutoConfiguration {
                 }
 
                 final LedgerStore ledgerStore = new LedgerStore(ledgerStoreFile);
+
+
+                // set admin
+
+                ledgerOrg.setCAClient(HFCAClient.createNewInstance(ledgerOrg.getCALocation(), ledgerOrg.getCAProperties()));
+
+
+                HFCAClient hfcaClient = ledgerOrg.getCAClient();
+                hfcaClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
+                UserConfig userConfig = ledgerProperties.getUsers().get("admin");
+                LedgerUser admin = ledgerStore.getMember(userConfig.getName(), orgConfig.getName());
+
+                if (!admin.isEnrolled()) {
+                    admin.setEnrollment(hfcaClient.enroll(admin.getName(), userConfig.getSecret()));
+                    admin.setMspId(ledgerOrg.getMSPID());
+                }
+
+                ledgerOrg.setAdmin(admin);
+
+
+                // set peerAdmin
                 LedgerUser peerOrgAdmin = ledgerStore.getMember(orgConfig.getName() + "Admin", orgConfig.getName(), ledgerOrg.getMSPID(),
                         Util.findFileSk(
                                 Paths.get(
@@ -159,6 +185,10 @@ public class LedgerAutoConfiguration {
 
                 ledgerOrg.setPeerAdmin(peerOrgAdmin); //A special user that can create channels, join peers and install chaincode
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (EnrollmentException e) {
+                e.printStackTrace();
+            } catch (org.hyperledger.fabric_ca.sdk.exception.InvalidArgumentException e) {
                 e.printStackTrace();
             }
 

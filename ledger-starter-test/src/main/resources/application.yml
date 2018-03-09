@@ -38,10 +38,12 @@ ledger:
           url: grpc://${hostname}:8053
         - name: peer1.org2.example.com
           url: grpc://${hostname}:8058
-  userList:
-    - name: admin
+  users:
+    admin:
+      name: admin
       secret: adminpw
-    - name: user1
+    user1:
+      name: user1
       secret: user1
   channelList:
     - name: foo
