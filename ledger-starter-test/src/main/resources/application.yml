@@ -1,47 +1,43 @@
+hostname: 192.168.95.143
+
 ledger:
   orgs:
     org1:
       name: org1
       mspId: Org1MSP
       domname: org1.example.com
-      caLocation: http://192.168.95.143:7054
+      caLocation: http://${hostname}:7054
       peers:
         - name: peer0.org1.example.com
-          url: grpc://192.168.95.143:7051
+          url: grpc://${hostname}:7051
         - name: peer1.org1.example.com
-          url: grpc://192.168.95.143:7056
-#      peerLocations: peer0.org1.example.com@grpc://192.168.95.143:7051, peer1.org1.example.com@grpc://192.168.95.143:7056
+          url: grpc://${hostname}:7056
       orderers:
         - name: orderer.example.com
-          url: grpc://192.168.95.143:7050
-#      ordererLocations: orderer.example.com@grpc://192.168.95.143:7050
+          url: grpc://${hostname}:7050
       eventHubs:
         - name: peer0.org1.example.com
-          url: grpc://192.168.95.143:7053
+          url: grpc://${hostname}:7053
         - name: peer1.org1.example.com
-          url: grpc://192.168.95.143:7058
-#      eventHubLocations: peer0.org1.example.com@grpc://192.168.95.143:7053,peer1.org1.example.com@grpc://192.168.95.143:7058
+          url: grpc://${hostname}:7058
     org2:
       name: org2
       mspId: Org2MSP
       domname: org2.example.com
-      caLocation: http://192.168.95.143:8054
+      caLocation: http://${hostname}:8054
       peers:
         - name: peer0.org2.example.com
-          url: grpc://192.168.95.143:8051
+          url: grpc://${hostname}:8051
         - name: peer1.org2.example.com
-          url: grpc://192.168.95.143:8056
-#      peerLocations: peer0.org1.example.com@grpc://192.168.95.143:7051, peer1.org1.example.com@grpc://192.168.95.143:7056
+          url: grpc://${hostname}:8056
       orderers:
         - name: orderer.example.com
-          url: grpc://192.168.95.143:7050
-#      ordererLocations: orderer.example.com@grpc://192.168.95.143:7050
+          url: grpc://${hostname}:7050
       eventHubs:
         - name: peer0.org2.example.com
-          url: grpc://192.168.95.143:8053
+          url: grpc://${hostname}:8053
         - name: peer1.org2.example.com
-          url: grpc://192.168.95.143:8058
-#      eventHubLocations: peer0.org1.example.com@grpc://192.168.95.143:7053,peer1.org1.example.com@grpc://192.168.95.143:7058
+          url: grpc://${hostname}:8058
   userList:
     - name: admin
       secret: adminpw
@@ -52,6 +48,7 @@ ledger:
       path: e2e-2Orgs/channel
     - name: bar
       path: e2e-2Orgs/channel
+  channelPath: e2e-2Orgs/channel
   chaincodeList:
     - name: rebare_cc
       path: demo/target/classes
