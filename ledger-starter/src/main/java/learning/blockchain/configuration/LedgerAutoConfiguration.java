@@ -1,6 +1,9 @@
 package learning.blockchain.configuration;
 
 import learning.blockchain.entitys.LedgerOrg;
+import learning.blockchain.entitys.LedgerStore;
+import learning.blockchain.entitys.LedgerUser;
+import learning.blockchain.utils.Util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
@@ -24,6 +27,8 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import static java.lang.String.format;
 
 /**
  * Create with IntelliJ IDEA
@@ -112,6 +117,51 @@ public class LedgerAutoConfiguration {
 
                 ledgerOrg.setCAProperties(properties);
             }
+
+
+
+            // set peerAdmain
+            try {
+                File ledgerStoreFile = new File(System.getProperty("java.io.tmpdir") + "/HFC.properties");
+                if (ledgerStoreFile.exists()) {
+                    boolean result = ledgerStoreFile.delete();
+                    if (result) {
+                        logger.info("remove HFC.properties");
+                    }
+                }
+
+                final LedgerStore ledgerStore = new LedgerStore(ledgerStoreFile);
+                LedgerUser peerOrgAdmin = ledgerStore.getMember(orgConfig.getName() + "Admin", orgConfig.getName(), ledgerOrg.getMSPID(),
+                        Util.findFileSk(
+                                Paths.get(
+                                        this.getClass().getResource("/").getPath(),
+                                        ledgerProperties.getChannelPath(),
+                                        ledgerProperties.getCryptoConfigPath(),
+                                        ledgerOrg.getDomainName(),
+                                        format(
+                                                "/users/Admin@%s/msp/keystore",
+                                                ledgerOrg.getDomainName()
+                                        )
+                                ).toFile()
+                        ),
+                        Paths.get(
+                                this.getClass().getResource("/").getPath(),
+                                ledgerProperties.getChannelPath(),
+                                ledgerProperties.getCryptoConfigPath(),
+                                ledgerOrg.getDomainName(),
+                                format(
+                                        "/users/Admin@%s/msp/signcerts/Admin@%s-cert.pem",
+                                        ledgerOrg.getDomainName(),
+                                        ledgerOrg.getDomainName()
+                                )
+                        ).toFile()
+                );
+
+                ledgerOrg.setPeerAdmin(peerOrgAdmin); //A special user that can create channels, join peers and install chaincode
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
 
             ledgerOrgMap.put(ledgerOrg.getName(), ledgerOrg);
         }
