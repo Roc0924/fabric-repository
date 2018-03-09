@@ -4,7 +4,6 @@ import learning.blockchain.configuration.LedgerOrgs;
 import learning.blockchain.entitys.LedgerOrg;
 import learning.blockchain.entitys.LedgerStore;
 import learning.blockchain.entitys.LedgerUser;
-import learning.blockchain.utils.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.sdk.security.CryptoSuite;
 import org.hyperledger.fabric_ca.sdk.HFCAClient;
@@ -16,9 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
-
-import static java.lang.String.format;
 
 /**
  * Create with IntelliJ IDEA
@@ -72,33 +68,33 @@ public class UserService {
             ledgerOrg.setAdmin(admin);
 
 
-            LedgerUser peerOrgAdmin = ledgerStore.getMember(orgName + "Admin", orgName, ledgerOrg.getMSPID(),
-                    Util.findFileSk(
-                            Paths.get(
-                                    this.getClass().getResource("/").getPath(),
-                                    channelPath,
-                                    cryptoConfigPath,
-                                    ledgerOrg.getDomainName(),
-                                    format(
-                                            "/users/Admin@%s/msp/keystore",
-                                            ledgerOrg.getDomainName()
-                                    )
-                            ).toFile()
-                    ),
-                    Paths.get(
-                            this.getClass().getResource("/").getPath(),
-                            channelPath,
-                            cryptoConfigPath,
-                            ledgerOrg.getDomainName(),
-                            format(
-                                    "/users/Admin@%s/msp/signcerts/Admin@%s-cert.pem",
-                                    ledgerOrg.getDomainName(),
-                                    ledgerOrg.getDomainName()
-                            )
-                    ).toFile()
-            );
-
-            ledgerOrg.setPeerAdmin(peerOrgAdmin); //A special user that can create channels, join peers and install chaincode
+//            LedgerUser peerOrgAdmin = ledgerStore.getMember(orgName + "Admin", orgName, ledgerOrg.getMSPID(),
+//                    Util.findFileSk(
+//                            Paths.get(
+//                                    this.getClass().getResource("/").getPath(),
+//                                    channelPath,
+//                                    cryptoConfigPath,
+//                                    ledgerOrg.getDomainName(),
+//                                    format(
+//                                            "/users/Admin@%s/msp/keystore",
+//                                            ledgerOrg.getDomainName()
+//                                    )
+//                            ).toFile()
+//                    ),
+//                    Paths.get(
+//                            this.getClass().getResource("/").getPath(),
+//                            channelPath,
+//                            cryptoConfigPath,
+//                            ledgerOrg.getDomainName(),
+//                            format(
+//                                    "/users/Admin@%s/msp/signcerts/Admin@%s-cert.pem",
+//                                    ledgerOrg.getDomainName(),
+//                                    ledgerOrg.getDomainName()
+//                            )
+//                    ).toFile()
+//            );
+//
+//            ledgerOrg.setPeerAdmin(peerOrgAdmin); //A special user that can create channels, join peers and install chaincode
 
 
         } catch (EnrollmentException | InvalidArgumentException | IOException e) {
