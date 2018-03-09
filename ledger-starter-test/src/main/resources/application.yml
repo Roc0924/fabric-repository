@@ -45,8 +45,10 @@ ledger:
       secret: user1
   channelList:
     - name: foo
+      orgName: org1
       path: e2e-2Orgs/channel
     - name: bar
+      orgName: org2
       path: e2e-2Orgs/channel
   channelPath: e2e-2Orgs/channel
   chaincodeList:
