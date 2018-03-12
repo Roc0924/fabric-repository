@@ -64,6 +64,7 @@ ledger:
     proposalWaitTime: 12000000
   runWithTls: false
   cryptoConfigPath: crypto-config/peerOrganizations/
+  currentOrgName: org1
 
 server:
   port: 8081
