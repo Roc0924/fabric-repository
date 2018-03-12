@@ -46,7 +46,7 @@ import static java.lang.String.format;
 @ConditionalOnProperty(prefix = "ledger", value = "enable", matchIfMissing = true)
 public class LedgerAutoConfiguration {
 
-    Logger logger = Logger.getLogger(LedgerAutoConfiguration.class);
+    Log logger = LogFactory.getLog(LedgerAutoConfiguration.class);
 
     final LedgerProperties ledgerProperties;
 
