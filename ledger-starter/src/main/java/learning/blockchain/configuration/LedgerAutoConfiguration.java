@@ -55,19 +55,9 @@ public class LedgerAutoConfiguration {
         this.ledgerProperties = ledgerProperties;
     }
 
-    @Bean
-    @ConditionalOnMissingBean(HFClient.class)
-    public HFClient hFClient() {
-        HFClient hfClient = HFClient.createNewInstance();
 
-        try {
-            hfClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
-        } catch (CryptoException | InvalidArgumentException e) {
-            e.printStackTrace();
-        }
 
-        return hfClient;
-    }
+
 
 
     @Bean
@@ -184,11 +174,7 @@ public class LedgerAutoConfiguration {
                 );
 
                 ledgerOrg.setPeerAdmin(peerOrgAdmin); //A special user that can create channels, join peers and install chaincode
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (EnrollmentException e) {
-                e.printStackTrace();
-            } catch (org.hyperledger.fabric_ca.sdk.exception.InvalidArgumentException e) {
+            } catch (IOException | EnrollmentException | org.hyperledger.fabric_ca.sdk.exception.InvalidArgumentException e) {
                 e.printStackTrace();
             }
 
@@ -199,6 +185,61 @@ public class LedgerAutoConfiguration {
         ledgerOrgs.setLedgerOrgs(ledgerOrgMap);
         return ledgerOrgs;
     }
+
+
+
+
+    @Bean
+    @Autowired
+    @ConditionalOnMissingBean(HFClient.class)
+    public HFClient hFClient(LedgerOrgs ledgerOrgs) {
+        HFClient hfClient = HFClient.createNewInstance();
+
+        try {
+            hfClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
+        } catch (CryptoException | InvalidArgumentException e) {
+            e.printStackTrace();
+        }
+
+
+
+        try {
+            String orgName = ledgerProperties.getCurrentOrgName();
+            UserConfig userConfig = ledgerProperties.getUsers().get("admin");
+
+
+            LedgerOrg ledgerOrg = ledgerOrgs.getLedgerOrgs().get(orgName);
+
+            ledgerOrg.setCAClient(HFCAClient.createNewInstance(ledgerOrg.getCALocation(), ledgerOrg.getCAProperties()));
+
+            File ledgerStoreFile = new File(System.getProperty("java.io.tmpdir") + "/HFC.properties");
+            if (ledgerStoreFile.exists()) {
+                boolean result = ledgerStoreFile.delete();
+                if (result) {
+                    logger.info("remove HFC.properties");
+                }
+            }
+
+            final LedgerStore ledgerStore = new LedgerStore(ledgerStoreFile);
+
+            HFCAClient ca = ledgerOrg.getCAClient();
+            final String mspId = ledgerOrg.getMSPID();
+            ca.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
+            LedgerUser admin = ledgerStore.getMember(userConfig.getName(), orgName);
+            if (!admin.isEnrolled()) {  //Preregistered admin only needs to be enrolled with Fabric caClient.
+                admin.setEnrollment(ca.enroll(admin.getName(), userConfig.getSecret()));
+                admin.setMspId(mspId);
+            }
+
+            ledgerOrg.setAdmin(admin);
+        } catch (org.hyperledger.fabric_ca.sdk.exception.InvalidArgumentException | MalformedURLException | EnrollmentException e) {
+            e.printStackTrace();
+        }
+
+        return hfClient;
+    }
+
+
 
 
     @Bean

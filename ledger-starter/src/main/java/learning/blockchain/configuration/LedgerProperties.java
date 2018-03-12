@@ -24,6 +24,7 @@ public class LedgerProperties {
     private List<String> times;                             // 时间
     private boolean runWithTls;                             // 是否开启tls
     private String cryptoConfigPath;                        // crypto配置路径
+    private String currentOrgName;                          // 当前组织名称
 
 
     public Map<String, OrgConfig> getOrgs() {
@@ -88,5 +89,13 @@ public class LedgerProperties {
 
     public void setCryptoConfigPath(String cryptoConfigPath) {
         this.cryptoConfigPath = cryptoConfigPath;
+    }
+
+    public String getCurrentOrgName() {
+        return currentOrgName;
+    }
+
+    public void setCurrentOrgName(String currentOrgName) {
+        this.currentOrgName = currentOrgName;
     }
 }
