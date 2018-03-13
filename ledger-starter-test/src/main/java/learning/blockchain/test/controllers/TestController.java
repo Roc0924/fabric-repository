@@ -1,6 +1,5 @@
 package learning.blockchain.test.controllers;
 
-import learning.blockchain.configuration.LedgerOrgs;
 import learning.blockchain.test.dtos.ChainCodeDTO;
 import learning.blockchain.test.services.ChainCodeService;
 import org.hyperledger.fabric.sdk.HFClient;
@@ -20,15 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     final HFClient hfClient;
-    final LedgerOrgs ledgerOrgs;
+//    final LedgerOrgs ledgerOrgs;
     final ChainCodeService chainCodeService;
 
     @Autowired
     public TestController(HFClient hfClient,
-                          LedgerOrgs ledgerOrgs,
+//                          LedgerOrgs ledgerOrgs,
                           ChainCodeService chainCodeService) {
         this.hfClient = hfClient;
-        this.ledgerOrgs = ledgerOrgs;
+//        this.ledgerOrgs = ledgerOrgs;
         this.chainCodeService = chainCodeService;
     }
 

@@ -143,7 +143,7 @@ public class FabricConfigManager {
 
         final String domainName = getDomainName(name);
 
-        File cert = Paths.get(getTestChannelPath(), "crypto-config/ordererOrganizations".replace("orderer", type), domainName, type + "s",
+        File cert = Paths.get(this.getClass().getResource("/").getPath(), "e2e-2Orgs/channel/crypto-config/ordererOrganizations".replace("orderer", type), domainName, type + "s",
                 name, "tls/server.crt").toFile();
         if (!cert.exists()) {
             throw new RuntimeException(String.format("Missing cert file for: %s. Could not find at location: %s", name,
@@ -170,11 +170,11 @@ public class FabricConfigManager {
 
     }
 
-    private String getTestChannelPath() {
-
-        return "demo-ledger-admin/target/classes/e2e-2Orgs/channel";
-
-    }
+//    private String getTestChannelPath() {
+//
+//        return "demo-ledger-admin/target/classes/e2e-2Orgs/channel";
+//
+//    }
 
 
     Properties getPeerProperties(String name) {
