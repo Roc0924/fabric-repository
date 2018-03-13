@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
  * Time                 : 14:21
  * Description          :
  */
-@Data
-@Component
-@ConfigurationProperties(prefix = "hyperledger.fabric")
+//@Data
+//@Component
+//@ConfigurationProperties(prefix = "hyperledger.fabric")
 public class FabricConfig {
     private String gossipWaitTime;
     private String invokeWaitTime;

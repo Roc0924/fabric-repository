@@ -37,7 +37,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class FabricService {
     private final HFClient hfClient;
 
-    private final FabricConfig config;
+//    private final FabricConfig config;
 
     private final Channel channel;
 
@@ -53,9 +53,16 @@ public class FabricService {
     private Collection<ProposalResponse> failed = new LinkedList<>();
 
     @Autowired
-    public FabricService(HFClient hfClient, FabricConfig config, Channel channel, FabricConfigManager fabricConfigManager, LedgerProperties ledgerProperties, ChaincodeID chaincodeID) {
+    public FabricService(
+            HFClient hfClient,
+//            FabricConfig config,
+            Channel channel,
+            FabricConfigManager fabricConfigManager,
+            LedgerProperties ledgerProperties,
+            ChaincodeID chaincodeID
+    ) {
         this.hfClient = hfClient;
-        this.config = config;
+//        this.config = config;
         this.channel = channel;
         this.fabricConfigManager = fabricConfigManager;
         this.ledgerProperties = ledgerProperties;
@@ -79,9 +86,11 @@ public class FabricService {
         try {
 
             final String channelName = channel.getName();
-            boolean isFooChain = config.getFooChannelName().equals(channelName);
+//            boolean isFooChain = config.getFooChannelName().equals(channelName);
+            boolean isFooChain = ledgerProperties.isRunWithTls();
             channel.setTransactionWaitTime(fabricConfigManager.getTransactionWaitTime());
-            channel.setDeployWaitTime(Integer.parseInt(config.getDeployWaitTime()));
+//            channel.setDeployWaitTime(Integer.parseInt(config.getDeployWaitTime()));
+            channel.setDeployWaitTime(ledgerProperties.getTimes().get("deployWaitTime").intValue());
 
             Collection<Orderer> orderers = channel.getOrderers();
             Collection<ProposalResponse> responses;
@@ -97,13 +106,14 @@ public class FabricService {
 
             if (isFooChain) {
                 // on foo chain install from directory.
-                installProposalRequest.setChaincodeSourceLocation(new File(config.getFixturesPath()));
+                installProposalRequest.setChaincodeSourceLocation(new File(this.getClass().getResource("/").getPath()));
             } else {
                 log.error("chain code error");
                 throw new Exception("chain code error");
             }
 
-            installProposalRequest.setChaincodeVersion(config.getChainCodeVersion());
+//            installProposalRequest.setChaincodeVersion(config.getChainCodeVersion());
+            installProposalRequest.setChaincodeVersion(ledgerProperties.getChainCodes().get("rebate_directly_cc_json").getVersion());
 
             int numInstallProposal = 0;
 
@@ -132,7 +142,7 @@ public class FabricService {
 
             // Instantiate chaincode.
             InstantiateProposalRequest instantiateProposalRequest = hfClient.newInstantiationProposalRequest();
-            instantiateProposalRequest.setProposalWaitTime(Integer.parseInt(config.getProposalWaitTime()));
+            instantiateProposalRequest.setProposalWaitTime(ledgerProperties.getTimes().get("proposalWaitTime"));
             instantiateProposalRequest.setChaincodeID(chaincodeID);
             instantiateProposalRequest.setFcn("init");
             instantiateProposalRequest.setArgs(new String[] {"a", "500", "b", "1000"});
@@ -146,7 +156,7 @@ public class FabricService {
               See README.md Chaincode endorsement policies section for more details.
             */
             ChaincodeEndorsementPolicy chaincodeEndorsementPolicy = new ChaincodeEndorsementPolicy();
-            chaincodeEndorsementPolicy.fromYamlFile(new File(config.getFixturesPath() + "/chaincodeendorsementpolicy.yaml"));
+            chaincodeEndorsementPolicy.fromYamlFile(new File(this.getClass().getResource("/").getPath() + "/chaincodeendorsementpolicy.yaml"));
             instantiateProposalRequest.setChaincodeEndorsementPolicy(chaincodeEndorsementPolicy);
 
             log.info("Sending instantiateProposalRequest to all peers with arguments: a and b set to 100 and {} respectively", "" + "1000");
@@ -228,9 +238,9 @@ public class FabricService {
             InstallProposalRequest installProposalRequest = hfClient.newInstallProposalRequest();
             installProposalRequest.setChaincodeID(chaincodeID);
             ////For GO language and serving just a single user, chaincodeSource is mostly likely the users GOPATH
-            installProposalRequest.setChaincodeSourceLocation(new File(config.getFixturesPath()));
+            installProposalRequest.setChaincodeSourceLocation(new File(this.getClass().getResource("/").getPath()));
             installProposalRequest.setChaincodeVersion(chaincodeID.getVersion());
-            installProposalRequest.setProposalWaitTime(Integer.parseInt(config.getProposalWaitTime()));
+            installProposalRequest.setProposalWaitTime(ledgerProperties.getTimes().get("proposalWaitTime"));
 
 
             ////////////////////////////
@@ -296,7 +306,7 @@ public class FabricService {
 //            upgradeProposalRequest.setArgs(new String[] {});
             upgradeProposalRequest.setArgs(new String[] {"a", "500", "b", "1000"});
             ChaincodeEndorsementPolicy chaincodeEndorsementPolicy = new ChaincodeEndorsementPolicy();
-            chaincodeEndorsementPolicy.fromYamlFile(new File(config.getFixturesPath() + "/chaincodeendorsementpolicy.yaml"));
+            chaincodeEndorsementPolicy.fromYamlFile(new File(this.getClass().getResource("/").getPath() + "/chaincodeendorsementpolicy.yaml"));
 
             upgradeProposalRequest.setChaincodeEndorsementPolicy(chaincodeEndorsementPolicy);
             Map<String, byte[]> tmap = new HashMap<>();

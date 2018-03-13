@@ -1,9 +1,6 @@
 package learning.chaincode.fabricadmin.configs;
 
-import learning.chaincode.fabricadmin.dtos.ChannelConfig;
-import learning.chaincode.fabricadmin.dtos.OrgConfig;
-import learning.chaincode.fabricadmin.dtos.SampleOrg;
-import learning.chaincode.fabricadmin.dtos.UserConfig;
+import learning.chaincode.fabricadmin.dtos.*;
 import learning.chaincode.fabricadmin.entitys.LedgerOrg;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -28,6 +25,7 @@ public class LedgerProperties {
     private List<ChannelConfig> channelList;                                           // 频道列表
     private String channelPath;                                                        // 频道路径
     private List<Map<String, String>> chainCodeList;                                   // 智能合约列表
+    private Map<String, ChainCodeConfig> chainCodes;
     private Map<String, Long> times;                                                        // 时间
     private boolean runWithTls;                                                        // 是否开启tls
     private String cryptoConfigPath;                                                   // crypto配置路径
@@ -116,5 +114,13 @@ public class LedgerProperties {
     public Collection<SampleOrg> getIntegrationSampleOrgs(){
 
         return Collections.unmodifiableCollection(sampleOrgs.values());
+    }
+
+    public Map<String, ChainCodeConfig> getChainCodes() {
+        return chainCodes;
+    }
+
+    public void setChainCodes(Map<String, ChainCodeConfig> chainCodes) {
+        this.chainCodes = chainCodes;
     }
 }

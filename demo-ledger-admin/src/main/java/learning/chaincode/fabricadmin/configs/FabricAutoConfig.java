@@ -54,15 +54,16 @@ public class FabricAutoConfig {
 
     /**
      * 自动注入合约ID
-     * @param config
      * @return
      */
-    @Autowired
     @Bean(name = "chainCodeID")
-    ChaincodeID chaincodeID(FabricConfig config) {
-        return ChaincodeID.newBuilder().setName(config.getChainCodeName())
-                .setVersion(config.getChainCodeVersion())
-                .setPath(config.getChainCodePath()).build();
+    ChaincodeID chaincodeID() {
+
+        ChainCodeConfig chainCodeConfig = ledgerProperties.getChainCodes().get("rebate_directly_cc_json");
+
+        return ChaincodeID.newBuilder().setName(chainCodeConfig.getName())
+                .setVersion(chainCodeConfig.getVersion())
+                .setPath(chainCodeConfig.getPath()).build();
     }
 
 
@@ -207,7 +208,6 @@ public class FabricAutoConfig {
      * 自动注入渠道
      * @param fabricConfigManager
      * @param client
-     * @param config
      * @return
      * @throws InvalidArgumentException
      * @throws TransactionException
@@ -216,10 +216,10 @@ public class FabricAutoConfig {
      */
     @Bean(name = "channel")
     @Autowired
-    public Channel channel(FabricConfigManager fabricConfigManager, HFClient client, FabricConfig config) throws InvalidArgumentException, TransactionException, ProposalException, IOException {
+    public Channel channel(FabricConfigManager fabricConfigManager, HFClient client) throws InvalidArgumentException, TransactionException, ProposalException, IOException {
 
         SampleOrg sampleOrg = fabricConfigManager.getIntegrationTestsSampleOrg("peerOrg1");
-        String name = config.getFooChannelName();
+        String name = "foo";
 
         Channel newChannel = null;
         try {

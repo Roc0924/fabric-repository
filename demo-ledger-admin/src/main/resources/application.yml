@@ -53,10 +53,16 @@ ledger:
       orgName: org2
       path: e2e-2Orgs/channel
   channelPath: e2e-2Orgs/channel
-  chaincodeList:
+  chainCodeList:
     - name: rebate_directly_cc_json
       path: demo/target/classes
       version: 1
+  chainCodes:
+    rebate_directly_cc_json:
+      name: rebate_directly_cc_json
+      path: demo/target/classes
+      version: 1
+
   times:
     gossipWaitTime: 500000
     invokeWaitTime: 10000000
