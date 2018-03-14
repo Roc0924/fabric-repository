@@ -1,4 +1,4 @@
-package learning.chaincode.fabricadmin.dtos;
+package learning.chaincode.fabricadmin.entitys;
 
 /**
  * Create with IntelliJ IDEA

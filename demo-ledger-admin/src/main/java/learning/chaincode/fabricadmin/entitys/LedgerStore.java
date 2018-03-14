@@ -132,7 +132,7 @@ public class LedgerStore {
 
             PrivateKey privateKey = getPrivateKeyFromBytes(IOUtils.toByteArray(new FileInputStream(privateKeyFile)));
 
-            ledgerUser.setEnrollment(new LedgerStore.SampleStoreEnrollement(privateKey, certificate));
+            ledgerUser.setEnrollment(new LedgerStore.LedgerStoreEnrollement(privateKey, certificate));
 
             ledgerUser.saveState();
 
@@ -163,14 +163,14 @@ public class LedgerStore {
         return privateKey;
     }
 
-    static final class SampleStoreEnrollement implements Enrollment, Serializable {
+    static final class LedgerStoreEnrollement implements Enrollment, Serializable {
 
         private static final long serialVersionUID = -7077068549994159470L;
         private final PrivateKey privateKey;
         private final String certificate;
 
 
-        SampleStoreEnrollement(PrivateKey privateKey, String certificate)  {
+        LedgerStoreEnrollement(PrivateKey privateKey, String certificate)  {
 
 
             this.certificate = certificate;

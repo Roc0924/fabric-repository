@@ -3,10 +3,10 @@ package learning.chaincode.fabricadmin.configs;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import learning.chaincode.fabricadmin.dtos.ChainCodeConfig;
-import learning.chaincode.fabricadmin.dtos.SampleOrg;
-import learning.chaincode.fabricadmin.dtos.SampleStore;
-import learning.chaincode.fabricadmin.dtos.SampleUser;
+import learning.chaincode.fabricadmin.entitys.ChainCodeConfig;
+import learning.chaincode.fabricadmin.entitys.LedgerOrg;
+import learning.chaincode.fabricadmin.entitys.LedgerStore;
+import learning.chaincode.fabricadmin.entitys.LedgerUser;
 import learning.chaincode.fabricadmin.utils.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.sdk.*;
@@ -85,38 +85,38 @@ public class FabricAutoConfig {
         }
 
 
-        Collection<SampleOrg> sampleOrgs = fabricConfigManager.getIntegrationSampleOrgs();
+        Collection<LedgerOrg> ledgerOrgs = fabricConfigManager.getIntegrationLedgerOrgs();
 
 
-        for (SampleOrg sampleOrg : sampleOrgs) {
-            sampleOrg.setCAClient(HFCAClient.createNewInstance(sampleOrg.getCALocation(), sampleOrg.getCAProperties()));
+        for (LedgerOrg ledgerOrg : ledgerOrgs) {
+            ledgerOrg.setCAClient(HFCAClient.createNewInstance(ledgerOrg.getCALocation(), ledgerOrg.getCAProperties()));
         }
-        File sampleStoreFile = new File(System.getProperty("java.io.tmpdir") + "/HFC.properties");
-        if (sampleStoreFile.exists()) {
-            boolean result = sampleStoreFile.delete();
+        File ledgerStoreFile = new File(System.getProperty("java.io.tmpdir") + "/HFC.properties");
+        if (ledgerStoreFile.exists()) {
+            boolean result = ledgerStoreFile.delete();
             if (result) {
                 log.info("remove HFC.properties");
             }
         }
 
 
-        final SampleStore sampleStore = new SampleStore(sampleStoreFile);
+        final LedgerStore ledgerStore = new LedgerStore(ledgerStoreFile);
 
 
-        for (SampleOrg sampleOrg : sampleOrgs) {
+        for (LedgerOrg ledgerOrg : ledgerOrgs) {
 
-            HFCAClient ca = sampleOrg.getCAClient();
-            final String orgName = sampleOrg.getName();
-            final String mspid = sampleOrg.getMSPID();
+            HFCAClient ca = ledgerOrg.getCAClient();
+            final String orgName = ledgerOrg.getName();
+            final String mspid = ledgerOrg.getMSPID();
             ca.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
-            SampleUser admin = sampleStore.getMember(ledgerProperties.getUsers().get("admin").getName(), orgName);
+            LedgerUser admin = ledgerStore.getMember(ledgerProperties.getUsers().get("admin").getName(), orgName);
             if (!admin.isEnrolled()) {  //Preregistered admin only needs to be enrolled with Fabric caClient.
                 admin.setEnrollment(ca.enroll(admin.getName(), "adminpw"));
                 admin.setMspId(mspid);
             }
 
-            sampleOrg.setAdmin(admin); // The admin of this org --
-            SampleUser user = sampleStore.getMember(ledgerProperties.getUsers().get("user1").getName(), sampleOrg.getName());
+            ledgerOrg.setAdmin(admin); // The admin of this org --
+            LedgerUser user = ledgerStore.getMember(ledgerProperties.getUsers().get("user1").getName(), ledgerOrg.getName());
 
 
             RegistrationRequest rr = new RegistrationRequest(user.getName(), "org1.department1");
@@ -151,20 +151,20 @@ public class FabricAutoConfig {
                 user.setEnrollment(enrollment);
                 user.setMspId(mspid);
             }
-            sampleOrg.addUser(user);
+            ledgerOrg.addUser(user);
 
-            final String sampleOrgName = sampleOrg.getName();
-            final String sampleOrgDomainName = sampleOrg.getDomainName();
+            final String ledgerOrgName = ledgerOrg.getName();
+            final String ledgerOrgDomainName = ledgerOrg.getDomainName();
 
-            SampleUser peerOrgAdmin = sampleStore.getMember(sampleOrgName + "Admin", sampleOrgName, sampleOrg.getMSPID(),
+            LedgerUser peerOrgAdmin = ledgerStore.getMember(ledgerOrgName + "Admin", ledgerOrgName, ledgerOrg.getMSPID(),
                     Util.findFileSk(Paths.get(this.getClass().getResource("/").getPath(), ledgerProperties.getChannelPath(),
                             ledgerProperties.getCryptoConfigPath(),
-                            sampleOrgDomainName, format("/users/Admin@%s/msp/keystore", sampleOrgDomainName)).toFile()),
+                            ledgerOrgDomainName, format("/users/Admin@%s/msp/keystore", ledgerOrgDomainName)).toFile()),
                     Paths.get(this.getClass().getResource("/").getPath(), ledgerProperties.getChannelPath(),
-                            ledgerProperties.getCryptoConfigPath(), sampleOrgDomainName,
-                            format("/users/Admin@%s/msp/signcerts/Admin@%s-cert.pem", sampleOrgDomainName, sampleOrgDomainName)).toFile());
+                            ledgerProperties.getCryptoConfigPath(), ledgerOrgDomainName,
+                            format("/users/Admin@%s/msp/signcerts/Admin@%s-cert.pem", ledgerOrgDomainName, ledgerOrgDomainName)).toFile());
 
-            sampleOrg.setPeerAdmin(peerOrgAdmin); //A special user that can create channels, join peers and install chaincode
+            ledgerOrg.setPeerAdmin(peerOrgAdmin); //A special user that can create channels, join peers and install chaincode
 
         }
 
@@ -188,12 +188,12 @@ public class FabricAutoConfig {
     @Autowired
     public Channel channel(FabricConfigManager fabricConfigManager, HFClient client) {
 
-        SampleOrg sampleOrg = fabricConfigManager.getIntegrationTestsSampleOrg("peerOrg1");
+        LedgerOrg ledgerOrg = fabricConfigManager.getIntegrationTestsLedgerOrg("peerOrg1");
         String name = "foo";
 
         Channel newChannel = null;
         try {
-            newChannel = reconstructChannel(fabricConfigManager, name, client, sampleOrg);
+            newChannel = reconstructChannel(fabricConfigManager, name, client, ledgerOrg);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -201,33 +201,33 @@ public class FabricAutoConfig {
     }
 
 
-    private Channel reconstructChannel(FabricConfigManager fabricConfigManager, String name, HFClient client, SampleOrg sampleOrg) throws Exception {
+    private Channel reconstructChannel(FabricConfigManager fabricConfigManager, String name, HFClient client, LedgerOrg ledgerOrg) throws Exception {
 
-        client.setUserContext(sampleOrg.getPeerAdmin());
+        client.setUserContext(ledgerOrg.getPeerAdmin());
         Channel newChannel = client.newChannel(name);
 
-        for (String orderName : sampleOrg.getOrdererNames()) {
-            newChannel.addOrderer(client.newOrderer(orderName, sampleOrg.getOrdererLocation(orderName),
+        for (String orderName : ledgerOrg.getOrdererNames()) {
+            newChannel.addOrderer(client.newOrderer(orderName, ledgerOrg.getOrdererLocation(orderName),
                     fabricConfigManager.getOrdererProperties(orderName)));
         }
 
-        for (String peerName : sampleOrg.getPeerNames()) {
-            String peerLocation = sampleOrg.getPeerLocation(peerName);
+        for (String peerName : ledgerOrg.getPeerNames()) {
+            String peerLocation = ledgerOrg.getPeerLocation(peerName);
             Peer peer = client.newPeer(peerName, peerLocation, fabricConfigManager.getPeerProperties(peerName));
 
             //Query the actual peer for which channels it belongs to and check it belongs to this channel
             Set<String> channels = client.queryChannels(peer);
             if (!channels.contains(name)) {
                 log.warn("Peer {} does not appear to belong to channel {}", peerName, name);
-                return constructChannel(fabricConfigManager, client, sampleOrg, name);
+                return constructChannel(fabricConfigManager, client, ledgerOrg, name);
             }
 
             newChannel.addPeer(peer);
-            sampleOrg.addPeer(peer);
+            ledgerOrg.addPeer(peer);
         }
 
-        for (String eventHubName : sampleOrg.getEventHubNames()) {
-            EventHub eventHub = client.newEventHub(eventHubName, sampleOrg.getEventHubLocation(eventHubName),
+        for (String eventHubName : ledgerOrg.getEventHubNames()) {
+            EventHub eventHub = client.newEventHub(eventHubName, ledgerOrg.getEventHubLocation(eventHubName),
                     fabricConfigManager.getEventHubProperties(eventHubName));
             newChannel.addEventHub(eventHub);
         }
@@ -238,14 +238,14 @@ public class FabricAutoConfig {
     }
 
     private Channel constructChannel(FabricConfigManager fabricConfigManager, HFClient client,
-                                     SampleOrg sampleOrg, String name) throws Exception {
+                                     LedgerOrg ledgerOrg, String name) throws Exception {
 
 
-        client.setUserContext(sampleOrg.getPeerAdmin());
+        client.setUserContext(ledgerOrg.getPeerAdmin());
 
         Collection<Orderer> orderers = new LinkedList<>();
 
-        for (String orderName : sampleOrg.getOrdererNames()) {
+        for (String orderName : ledgerOrg.getOrdererNames()) {
 
             Properties ordererProperties = fabricConfigManager.getOrdererProperties(orderName);
 
@@ -254,7 +254,7 @@ public class FabricAutoConfig {
             ordererProperties.put("grpc.NettyChannelBuilderOption.keepAliveTime", new Object[] {5L, TimeUnit.MINUTES});
             ordererProperties.put("grpc.NettyChannelBuilderOption.keepAliveTimeout", new Object[] {8L, TimeUnit.SECONDS});
 
-            orderers.add(client.newOrderer(orderName, sampleOrg.getOrdererLocation(orderName),
+            orderers.add(client.newOrderer(orderName, ledgerOrg.getOrdererLocation(orderName),
                     ordererProperties));
         }
 
@@ -266,10 +266,10 @@ public class FabricAutoConfig {
         ChannelConfiguration channelConfiguration = new ChannelConfiguration(new File(this.getClass().getResource("/").getPath() + "/e2e-2Orgs/channel/" + name + ".tx"));
 
         //Create channel that has only one signer that is this orgs peer admin. If channel creation policy needed more signature they would need to be added too.
-        Channel newChannel = client.newChannel(name, anOrderer, channelConfiguration, client.getChannelConfigurationSignature(channelConfiguration, sampleOrg.getPeerAdmin()));
+        Channel newChannel = client.newChannel(name, anOrderer, channelConfiguration, client.getChannelConfigurationSignature(channelConfiguration, ledgerOrg.getPeerAdmin()));
 
-        for (String peerName : sampleOrg.getPeerNames()) {
-            String peerLocation = sampleOrg.getPeerLocation(peerName);
+        for (String peerName : ledgerOrg.getPeerNames()) {
+            String peerLocation = ledgerOrg.getPeerLocation(peerName);
 
             Properties peerProperties = fabricConfigManager.getPeerProperties(peerName); //test properties for peer.. if any.
             if (peerProperties == null) {
@@ -280,21 +280,21 @@ public class FabricAutoConfig {
 
             Peer peer = client.newPeer(peerName, peerLocation, peerProperties);
             newChannel.joinPeer(peer);
-            sampleOrg.addPeer(peer);
+            ledgerOrg.addPeer(peer);
         }
 
         for (Orderer orderer : orderers) { //add remaining orderers if any.
             newChannel.addOrderer(orderer);
         }
 
-        for (String eventHubName : sampleOrg.getEventHubNames()) {
+        for (String eventHubName : ledgerOrg.getEventHubNames()) {
 
             final Properties eventHubProperties = fabricConfigManager.getEventHubProperties(eventHubName);
 
             eventHubProperties.put("grpc.NettyChannelBuilderOption.keepAliveTime", new Object[] {5L, TimeUnit.MINUTES});
             eventHubProperties.put("grpc.NettyChannconfigelBuilderOption.keepAliveTimeout", new Object[] {8L, TimeUnit.SECONDS});
 
-            EventHub eventHub = client.newEventHub(eventHubName, sampleOrg.getEventHubLocation(eventHubName),
+            EventHub eventHub = client.newEventHub(eventHubName, ledgerOrg.getEventHubLocation(eventHubName),
                     eventHubProperties);
             newChannel.addEventHub(eventHub);
         }

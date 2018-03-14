@@ -1,6 +1,6 @@
 package learning.chaincode.fabricadmin.configs;
 
-import learning.chaincode.fabricadmin.dtos.*;
+import learning.chaincode.fabricadmin.entitys.*;
 import lombok.Data;
 import org.hyperledger.fabric.sdk.helper.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +26,8 @@ public class FabricConfigManager {
 
     private final LedgerProperties ledgerProperties;
     private final Properties sdkProperties = new Properties();
-    private final HashMap<String, SampleOrg> sampleOrgs = new HashMap<>();
-    private final HashMap<String, SampleOrg> sampleOrgs1 = new HashMap<>();
+    private final HashMap<String, LedgerOrg> ledgerOrgs = new HashMap<>();
+    private final HashMap<String, LedgerOrg> ledgerOrgs1 = new HashMap<>();
 
     
     private final boolean runningTLS;
@@ -50,37 +50,37 @@ public class FabricConfigManager {
         for (Map.Entry<String, OrgConfig> entry : ledgerProperties.getOrgs().entrySet()) {
             String orgName = entry.getValue().getName();
             OrgConfig orgConfig = entry.getValue();
-            sampleOrgs.put(orgName, new SampleOrg(orgName, orgConfig.getMspId()));
+            ledgerOrgs.put(orgName, new LedgerOrg(orgName, orgConfig.getMspId()));
 
-            SampleOrg sampleOrg = new SampleOrg(orgName, orgConfig.getMspId());
+            LedgerOrg ledgerOrg = new LedgerOrg(orgName, orgConfig.getMspId());
 
 
             // set peers
             List<PeerConfig> peerConfigs = orgConfig.getPeers();
             for (PeerConfig peerConfig : peerConfigs) {
-                sampleOrg.addPeerLocation(peerConfig.getName(), grpcTLSify(peerConfig.getUrl()));
+                ledgerOrg.addPeerLocation(peerConfig.getName(), grpcTLSify(peerConfig.getUrl()));
             }
 
             // set domainName
-            sampleOrg.setDomainName(orgConfig.getDomName());
+            ledgerOrg.setDomainName(orgConfig.getDomName());
 
 
 
             // set orderers
             List<OrdererConfig> ordererConfigs = orgConfig.getOrderers();
             for (OrdererConfig ordererConfig : ordererConfigs) {
-                sampleOrg.addOrdererLocation(ordererConfig.getName(), grpcTLSify(ordererConfig.getUrl()));
+                ledgerOrg.addOrdererLocation(ordererConfig.getName(), grpcTLSify(ordererConfig.getUrl()));
             }
 
 
             // set event hub
             List<EventHubConfig> eventHubConfigs = orgConfig.getEventHubs();
             for (EventHubConfig eventHubConfig : eventHubConfigs) {
-                sampleOrg.addEventHubLocation(eventHubConfig.getName(), grpcTLSify(eventHubConfig.getUrl()));
+                ledgerOrg.addEventHubLocation(eventHubConfig.getName(), grpcTLSify(eventHubConfig.getUrl()));
             }
 
             // set ca location
-            sampleOrg.setCALocation(httpTLSify(orgConfig.getCaLocation()));
+            ledgerOrg.setCALocation(httpTLSify(orgConfig.getCaLocation()));
 
             if (runningFabricCATLS) {
                 String cert = "src/test/fixture/sdkintegration/e2e-2Orgs/channel/crypto-config/peerOrganizations/DNAME/ca/ca.DNAME-cert.pem".replaceAll("DNAME", orgConfig.getDomName());
@@ -93,11 +93,11 @@ public class FabricConfigManager {
 
                 properties.setProperty("allowAllHostNames", "true"); //testing environment only NOT FOR PRODUCTION!
 
-                sampleOrg.setCAProperties(properties);
+                ledgerOrg.setCAProperties(properties);
             }
 
 
-            sampleOrgs.put(orgName, sampleOrg);
+            ledgerOrgs.put(orgName, ledgerOrg);
         }
 
 
@@ -123,13 +123,13 @@ public class FabricConfigManager {
                 location.replaceFirst("^http://", "https://") : location;
     }
 
-    Collection<SampleOrg> getIntegrationSampleOrgs() {
-        return Collections.unmodifiableCollection(sampleOrgs.values());
+    Collection<LedgerOrg> getIntegrationLedgerOrgs() {
+        return Collections.unmodifiableCollection(ledgerOrgs.values());
     }
 
 
-    public SampleOrg getIntegrationTestsSampleOrg(String name) {
-        return sampleOrgs.get(name);
+    public LedgerOrg getIntegrationTestsLedgerOrg(String name) {
+        return ledgerOrgs.get(name);
 
     }
 

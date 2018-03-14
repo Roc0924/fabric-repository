@@ -4,7 +4,7 @@ package learning.chaincode.fabricadmin.services;
 import learning.chaincode.fabricadmin.configs.FabricConfigManager;
 import learning.chaincode.fabricadmin.configs.LedgerProperties;
 import learning.chaincode.fabricadmin.dtos.ChainCodeDto;
-import learning.chaincode.fabricadmin.dtos.SampleOrg;
+import learning.chaincode.fabricadmin.entitys.LedgerOrg;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.protos.peer.Query;
 import org.hyperledger.fabric.sdk.*;
@@ -68,13 +68,13 @@ public class FabricService {
 
 
     public ChainCodeDto installChainCode() {
-        SampleOrg sampleOrg = fabricConfigManager.getIntegrationTestsSampleOrg("peerOrg1");
+        LedgerOrg ledgerOrg = fabricConfigManager.getIntegrationTestsLedgerOrg("peerOrg1");
 
         ChainCodeDto chainCodeDto = queryInstalledChainCodeByName(chaincodeID.getName());
         if (null != chainCodeDto) {
             log.warn("chain code {} is exist", chainCodeDto);
             if (!chainCodeDto.getVersion().equals(chaincodeID.getVersion())) {
-                return this.upgradeChainCode(chaincodeID, sampleOrg);
+                return this.upgradeChainCode(chaincodeID, ledgerOrg);
             }
             return chainCodeDto;
         }
@@ -88,7 +88,7 @@ public class FabricService {
             Collection<ProposalResponse> failed = new LinkedList<>();
 
             // Install Proposal Request
-            hfClient.setUserContext(sampleOrg.getPeerAdmin());
+            hfClient.setUserContext(ledgerOrg.getPeerAdmin());
 
 
             InstallProposalRequest installProposalRequest = hfClient.newInstallProposalRequest();
@@ -101,7 +101,7 @@ public class FabricService {
 
             int numInstallProposal = 0;
 
-            Set<Peer> peersFromOrg = sampleOrg.getPeers();
+            Set<Peer> peersFromOrg = ledgerOrg.getPeers();
             numInstallProposal = numInstallProposal + peersFromOrg.size();
             responses = hfClient.sendInstallProposal(installProposalRequest, peersFromOrg);
 
@@ -222,7 +222,7 @@ public class FabricService {
     }
 
 
-    public ChainCodeDto upgradeChainCode(ChaincodeID chaincodeID, SampleOrg sampleOrg) {
+    public ChainCodeDto upgradeChainCode(ChaincodeID chaincodeID, LedgerOrg ledgerOrg) {
         ChainCodeDto installedChainCodeDto = queryInstalledChainCodeByName(chaincodeID.getName());
         try {
 
@@ -285,7 +285,7 @@ public class FabricService {
             Map<String, byte[]> tmap = new HashMap<>();
             tmap.put("test", "data".getBytes());
             upgradeProposalRequest.setTransientMap(tmap);
-            upgradeProposalRequest.setUserContext(sampleOrg.getPeerAdmin());
+            upgradeProposalRequest.setUserContext(ledgerOrg.getPeerAdmin());
 
             Collection<ProposalResponse> responses2 = channel.sendUpgradeProposal(upgradeProposalRequest);
             Collection<Set<ProposalResponse>> proposalConsistencySets2 = SDKUtils.getProposalConsistencySets(responses2);
@@ -319,8 +319,8 @@ public class FabricService {
     }
 
     public ChainCodeDto upgradeInstalledChaincode(ChaincodeID newChaincodeID) {
-        SampleOrg sampleOrg = fabricConfigManager.getIntegrationTestsSampleOrg("peerOrg1");
-        return upgradeChainCode(newChaincodeID, sampleOrg);
+        LedgerOrg ledgerOrg = fabricConfigManager.getIntegrationTestsLedgerOrg("peerOrg1");
+        return upgradeChainCode(newChaincodeID, ledgerOrg);
     }
 
 

@@ -1,4 +1,4 @@
-package learning.chaincode.fabricadmin.dtos;
+package learning.chaincode.fabricadmin.entitys;
 
 import lombok.Data;
 import org.hyperledger.fabric.sdk.ProposalResponse;

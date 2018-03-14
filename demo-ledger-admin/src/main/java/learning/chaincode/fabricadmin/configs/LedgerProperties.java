@@ -1,12 +1,10 @@
 package learning.chaincode.fabricadmin.configs;
 
-import learning.chaincode.fabricadmin.dtos.*;
-import learning.chaincode.fabricadmin.entitys.LedgerOrg;
+import learning.chaincode.fabricadmin.entitys.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.regex.Matcher;
 
 /**
  * Create with IntelliJ IDEA
@@ -31,7 +29,7 @@ public class LedgerProperties {
     private String cryptoConfigPath;                                                   // crypto配置路径
     private String currentOrgName;                                                     // 当前组织名称
 
-    private final HashMap<String, SampleOrg> sampleOrgs = new HashMap<>();             //
+    private final HashMap<String, LedgerOrg> ledgerOrgs = new HashMap<>();             //
 
 
 
@@ -107,13 +105,13 @@ public class LedgerProperties {
         this.currentOrgName = currentOrgName;
     }
 
-    public HashMap<String, SampleOrg> getSampleOrgs() {
-        return sampleOrgs;
+    public HashMap<String, LedgerOrg> getLedgerOrgs() {
+        return ledgerOrgs;
     }
 
-    public Collection<SampleOrg> getIntegrationSampleOrgs(){
+    public Collection<LedgerOrg> getIntegrationLedgerOrgs(){
 
-        return Collections.unmodifiableCollection(sampleOrgs.values());
+        return Collections.unmodifiableCollection(ledgerOrgs.values());
     }
 
     public Map<String, ChainCodeConfig> getChainCodes() {
