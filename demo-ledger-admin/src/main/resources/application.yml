@@ -55,7 +55,7 @@ ledger:
   channelPath: e2e-2Orgs/channel
   chainCodeList:
     - name: rebate_cc
-      path: demo/target/classes
+      path: github.com/chain_code
       version: 1
   chainCodes:
     rebate_directly_cc_json:
