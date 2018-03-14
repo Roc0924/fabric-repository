@@ -58,7 +58,7 @@ ledger:
       path: github.com/chain_code
       version: 1
   chainCodes:
-    rebate_directly_cc_json:
+    rebate_cc:
       name: rebate_cc
       path: github.com/chain_code
       version: 1
@@ -70,7 +70,10 @@ ledger:
     proposalWaitTime: 12000000
   runWithTls: false
   cryptoConfigPath: crypto-config/peerOrganizations/
-  currentOrgName: org1
+  currentOrgName: peerOrg1
+  currentUserName: user1
+  currentChaincodeVersion: 3
+  currentChaincodeName: rebate_cc
 
 server:
   port: 8081

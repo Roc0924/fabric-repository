@@ -27,8 +27,8 @@ public class FabricController {
         this.fabricService = fabricService;
     }
 
-    @RequestMapping(value = "/install", method = RequestMethod.GET)
-    public ChainCodeDto install() {
+    @RequestMapping(value = "/injectBudget", method = RequestMethod.GET)
+    public ChainCodeDto injectBudget() {
         return fabricService.installChainCode();
     }
 

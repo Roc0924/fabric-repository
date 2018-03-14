@@ -38,31 +38,34 @@ func (chaincode *RebateChaincode) Init(stub shim.ChaincodeStubInterface) pb.Resp
 func (chaincode *RebateChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("call method Invoke")
 	function, args := stub.GetFunctionAndParameters()
-	if function == "createAccount" {
+	if "invoke" != function {
+		return shim.Error("unknown function invoke")
+	}
+	if args[0] == "createAccount" {
 		// get one key's history records
 		return chaincode.createAccount(stub,args)
-	} else if function == "queryAccount" {
+	} else if args[0] == "queryAccount" {
 		// get one key's history records
 		return chaincode.queryAccount(stub,args)
-	} else if function == "deleteAccount" {
+	} else if args[0] == "deleteAccount" {
 		// Deletes account from ledger state
 		return chaincode.deleteAccount(stub, args)
-	} else if function == "queryHistory" {
+	} else if args[0] == "queryHistory" {
 		// get one key's history records
 		return chaincode.queryHistory(stub,args)
-	} else if function == "createPlan" {
+	} else if args[0] == "createPlan" {
 		// get one key's history records
 		return chaincode.createPlan(stub,args)
-	} else if function == "queryPlan" {
+	} else if args[0] == "queryPlan" {
 		// the old "Query" is now implemtned in invoke
 		return chaincode.queryPlan(stub, args)
-	} else if function == "addAmountFromBudget" {
+	} else if args[0] == "addAmountFromBudget" {
 		// get one key's history records
 		return chaincode.addAmountFromBudget(stub,args)
-	} /*else if function == "addAmountFromExpect" {
+	} else if args[0] == "addAmountFromExpect" {
 		// get one key's history records
 		return chaincode.addAmountFromExpect(stub,args)
-	} else if function == "minusAmount" {
+	} /*else if function == "minusAmount" {
 		// get one key's history records
 		return chaincode.minusAmount(stub,args)
 	} else if function == "addExpectAmount" {
@@ -159,11 +162,11 @@ func (chaincode *RebateChaincode) createAccount(stub shim.ChaincodeStubInterface
 }
 // Deletes an entity from state
 func (chaincode *RebateChaincode) createPlan(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	if len(args) != 2 {
-		return shim.Error("Incorrect number of arguments. Expecting 1")
+	if len(args) != 3 {
+		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
-	A := args[0]
-	val := args[1]
+	A := args[1]
+	val := args[2]
 	A ="plan_"+A
 	// Delete the key from the state in ledger
 	err := stub.PutState(A,[]byte(val))
@@ -195,11 +198,11 @@ func (chaincode *RebateChaincode) queryPlan(stub shim.ChaincodeStubInterface, ar
 	var A string // Entities
 	var err error
 
-	if len(args) != 1 {
+	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting name of the person to query")
 	}
 
-	A = args[0]
+	A = args[1]
 
 	// Get the state from the ledger
 	Avalbytes, err := stub.GetState("plan_"+A)
@@ -427,6 +430,24 @@ func (chaincode *RebateChaincode) rollBackExpectRebate(stub shim.ChaincodeStubIn
 	return shim.Success(nil)
 
 }
+
+
+
+func (chaincode *RebateChaincode) addAmountFromExpect(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	return shim.Success(nil)
+}
+
+
+
+func (chaincode *RebateChaincode) move(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	return shim.Success(nil)
+}
+
+
+
+
+
+
 
 
 func main() {

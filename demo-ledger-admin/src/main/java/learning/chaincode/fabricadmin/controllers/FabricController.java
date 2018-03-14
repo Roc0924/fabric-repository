@@ -5,6 +5,7 @@ import learning.chaincode.fabricadmin.dtos.ChainCodeDto;
 import learning.chaincode.fabricadmin.services.FabricService;
 import org.hyperledger.fabric.sdk.ChaincodeID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/fabric")
 public class FabricController {
+
 
     private final FabricService fabricService;
 
@@ -69,6 +71,23 @@ public class FabricController {
                 .setPath(chainCodeDto.getPath()).setVersion(chainCodeDto.getVersion()).build();
 
         return fabricService.upgradeInstalledChaincode(newChaincodeID);
+    }
+
+
+    @RequestMapping(value = "/injectBudget", method = RequestMethod.GET)
+    public Boolean injectBudget(
+            @RequestParam(name = "planId") String planId,
+            @RequestParam(name = "budgetAmount") Integer budgetAmount) {
+
+        return fabricService.injectBudget(planId, budgetAmount);
+    }
+
+
+    @RequestMapping(value = "/queryBudget", method = RequestMethod.GET)
+    public String queryBudget(
+            @RequestParam(name = "planId") String planId) {
+
+        return fabricService.queryBudget(planId);
     }
 
 }

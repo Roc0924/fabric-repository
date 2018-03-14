@@ -19,6 +19,7 @@ import org.hyperledger.fabric.sdk.security.CryptoSuite;
 import org.hyperledger.fabric_ca.sdk.HFCAClient;
 import org.hyperledger.fabric_ca.sdk.RegistrationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -44,6 +45,7 @@ public class FabricAutoConfig {
 
     final LedgerProperties ledgerProperties;
 
+
     @Autowired
     public FabricAutoConfig(LedgerProperties ledgerProperties) {
         this.ledgerProperties = ledgerProperties;
@@ -56,7 +58,7 @@ public class FabricAutoConfig {
     @Bean(name = "chainCodeID")
     ChaincodeID chaincodeID() {
 
-        ChainCodeConfig chainCodeConfig = ledgerProperties.getChainCodes().get("rebate_directly_cc_json");
+        ChainCodeConfig chainCodeConfig = ledgerProperties.getChainCodes().get(ledgerProperties.getCurrentChaincodeName());
 
         return ChaincodeID.newBuilder().setName(chainCodeConfig.getName())
                 .setVersion(chainCodeConfig.getVersion())

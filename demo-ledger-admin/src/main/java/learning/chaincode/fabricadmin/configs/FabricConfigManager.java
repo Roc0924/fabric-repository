@@ -193,4 +193,9 @@ public class FabricConfigManager {
     public int getTransactionWaitTime() {
         return ledgerProperties.getTimes().get("invokeWaitTime").intValue();
     }
+
+    public LedgerOrg getOrgByName(String orgName) {
+        return this.ledgerOrgs.get(orgName);
+
+    }
 }

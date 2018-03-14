@@ -1,9 +1,11 @@
 package learning.chaincode.fabricadmin.services;
 
 
+import com.google.gson.Gson;
 import learning.chaincode.fabricadmin.configs.FabricConfigManager;
 import learning.chaincode.fabricadmin.configs.LedgerProperties;
 import learning.chaincode.fabricadmin.dtos.ChainCodeDto;
+import learning.chaincode.fabricadmin.entitys.ChainCodeConfig;
 import learning.chaincode.fabricadmin.entitys.LedgerOrg;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.protos.peer.Query;
@@ -12,6 +14,7 @@ import org.hyperledger.fabric.sdk.exception.ChaincodeEndorsementPolicyParseExcep
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
 import org.hyperledger.fabric.sdk.exception.ProposalException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -31,6 +34,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * Time                 : 14:04
  * Description          : fabric 服务类
  */
+
 @Slf4j
 @Service("fabricService")
 public class FabricService {
@@ -44,6 +48,15 @@ public class FabricService {
 
 
     private final ChaincodeID chaincodeID;
+
+    @Value("${ledger.currentOrgName}")
+    private String currentOrgName;
+    @Value("${ledger.currentUserName}")
+    private String currentUserName;
+    @Value("${ledger.currentChaincodeName}")
+    private String currentChaincodeName;
+    @Value("${ledger.currentChaincodeVersion}")
+    private String currentChaincodeVersion;
 
 
     private Collection<ProposalResponse> successful = new LinkedList<>();
@@ -324,5 +337,131 @@ public class FabricService {
     }
 
 
+    /**
+     * 注入预算
+     * @param planId
+     * @param budgetAmount
+     * @return
+     */
+    public Boolean injectBudget(String planId, Integer budgetAmount) {
+        writeAction(new String[]{"createPlan", planId, budgetAmount.toString()});
+        return null;
+    }
+
+
+    /**
+     * 查询预算
+     * @param planId
+     * @return
+     */
+    public String queryBudget(String planId) {
+
+        return readAction(new String[]{"queryPlan", planId});
+    }
+
+
+    /**
+     * 调用ChainCode写操作
+     * @param args
+     * @return
+     */
+    private String writeAction(String[] args) {
+
+
+        Collection<ProposalResponse> successful = new ArrayList<>();
+
+
+        ChainCodeConfig chainCodeConfig = ledgerProperties.getChainCodes().get(currentChaincodeName);
+
+
+        ChaincodeID chaincodeID = ChaincodeID.newBuilder().setName(chainCodeConfig.getName())
+                .setPath(chainCodeConfig.getPath())
+                .setVersion(currentChaincodeVersion).build();
+
+
+        try {
+            hfClient.setUserContext(fabricConfigManager.getOrgByName(currentOrgName).getUser(currentUserName));
+
+            // send proposal to all peers
+            TransactionProposalRequest transactionProposalRequest = hfClient.newTransactionProposalRequest();
+            transactionProposalRequest.setChaincodeID(chaincodeID);
+            transactionProposalRequest.setFcn("invoke");
+            transactionProposalRequest.setArgs(args);
+            transactionProposalRequest.setProposalWaitTime(ledgerProperties.getTimes().get("proposalWaitTime"));
+
+
+            Map<String, byte[]> tm2 = new HashMap<>();
+            tm2.put("HyperLedgerFabric", "TransactionProposalRequest:JavaSDK".getBytes(UTF_8));
+            tm2.put("method", "TransactionProposalRequest".getBytes(UTF_8));
+            tm2.put("result", ":)".getBytes(UTF_8));  /// This should be returned see chaincode.
+            transactionProposalRequest.setTransientMap(tm2);
+
+
+            Collection<ProposalResponse> transactionPropResp = channel.sendTransactionProposal(transactionProposalRequest, channel.getPeers());
+
+            for (ProposalResponse response : transactionPropResp) {
+                if (response.getStatus() == ProposalResponse.Status.SUCCESS) {
+                    log.info("Successful  transaction proposal response Txid::{} from peer:{}", response.getTransactionID(), response.getPeer().getName());
+                    successful.add(response);
+                }
+            }
+
+
+            channel.sendTransaction(successful).get(fabricConfigManager.getTransactionWaitTime(), TimeUnit.SECONDS);
+
+        } catch (InvalidArgumentException | ProposalException | ExecutionException | InterruptedException | TimeoutException e) {
+            e.printStackTrace();
+        }
+
+
+
+        return "";
+    }
+
+
+    /**
+     * 调用chaincode读操作
+     * @param args
+     * @return
+     */
+    public String readAction(String[] args) {
+
+        Gson gson = new Gson();
+
+
+        ChainCodeConfig chainCodeConfig = ledgerProperties.getChainCodes().get(currentChaincodeName);
+        ChaincodeID chaincodeID = ChaincodeID.newBuilder().setName(chainCodeConfig.getName())
+                .setPath(chainCodeConfig.getPath())
+                .setVersion(currentChaincodeVersion).build();
+
+
+        QueryByChaincodeRequest queryByChaincodeRequest = hfClient.newQueryProposalRequest();
+        queryByChaincodeRequest.setArgs(args);
+        queryByChaincodeRequest.setFcn("invoke");
+        queryByChaincodeRequest.setChaincodeID(chaincodeID);
+
+        Collection<ProposalResponse> responses;
+
+        try {
+            responses = channel.queryByChaincode(queryByChaincodeRequest);
+
+
+
+            Collection<Set<ProposalResponse>> proposalConsistencySets = SDKUtils.getProposalConsistencySets(responses);
+
+            if (proposalConsistencySets.size() != 1) {
+                log.error(format("Expected only one set of consistent install proposal responses but got {}", proposalConsistencySets.size()));
+            }
+
+            return responses.iterator().next().getProposalResponse().getResponse().getPayload().toStringUtf8();
+
+
+        } catch (ProposalException | InvalidArgumentException e) {
+            e.printStackTrace();
+        }
+
+
+        return null;
+    }
 
 }
