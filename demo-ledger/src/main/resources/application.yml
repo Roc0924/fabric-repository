@@ -1,0 +1,77 @@
+#hostname: 192.168.95.143
+hostname: 10.115.3.114
+ledger:
+  orgs:
+    peerOrg1:
+      name: peerOrg1
+      mspId: Org1MSP
+      domName: org1.example.com
+      caLocation: http://${hostname}:7054
+      peers:
+        - name: peer0.org1.example.com
+          url: grpc://${hostname}:7051
+        - name: peer1.org1.example.com
+          url: grpc://${hostname}:7056
+      orderers:
+        - name: orderer.example.com
+          url: grpc://${hostname}:7050
+      eventHubs:
+        - name: peer0.org1.example.com
+          url: grpc://${hostname}:7053
+        - name: peer1.org1.example.com
+          url: grpc://${hostname}:7058
+    peerOrg2:
+      name: peerOrg2
+      mspId: Org2MSP
+      domName: org2.example.com
+      caLocation: http://${hostname}:8054
+      peers:
+        - name: peer0.org2.example.com
+          url: grpc://${hostname}:8051
+        - name: peer1.org2.example.com
+          url: grpc://${hostname}:8056
+      orderers:
+        - name: orderer.example.com
+          url: grpc://${hostname}:7050
+      eventHubs:
+        - name: peer0.org2.example.com
+          url: grpc://${hostname}:8053
+        - name: peer1.org2.example.com
+          url: grpc://${hostname}:8058
+  users:
+    admin:
+      name: admin
+      secret: adminpw
+    user1:
+      name: user1
+      secret: user1
+  channelList:
+    - name: foo
+      orgName: org1
+      path: e2e-2Orgs/channel
+    - name: bar
+      orgName: org2
+      path: e2e-2Orgs/channel
+  channelPath: e2e-2Orgs/channel
+  chainCodeList:
+    - name: rebate_directly_cc_json
+      path: demo/target/classes
+      version: 1
+  chainCodes:
+    rebate_directly_cc_json:
+      name: rebate_directly_cc_json
+      path: github.com/chain_code
+      version: 1
+
+  times:
+    gossipWaitTime: 500000
+    invokeWaitTime: 10
+    deployWaitTime: 12000000
+    proposalWaitTime: 12000000
+  runWithTls: false
+  cryptoConfigPath: crypto-config/peerOrganizations/
+  currentOrgName: org1
+
+server:
+  port: 8082
+debug: false
