@@ -60,7 +60,7 @@ ledger:
   chainCodes:
     rebate_directly_cc_json:
       name: rebate_directly_cc_json
-      path: demo/target/classes
+      path: github.com/chain_code
       version: 1
 
   times:
