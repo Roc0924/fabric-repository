@@ -5,7 +5,7 @@
  * Time                 : 下午4:50
  * Description          : rebate chain code
  */
-package rebate_cc
+package main
 
 
 
