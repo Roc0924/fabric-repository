@@ -54,12 +54,12 @@ ledger:
       path: e2e-2Orgs/channel
   channelPath: e2e-2Orgs/channel
   chainCodeList:
-    - name: rebate_directly_cc_json
-      path: demo/target/classes
+    - name: rebate_cc
+      path: github.com/chain_code
       version: 1
   chainCodes:
     rebate_directly_cc_json:
-      name: rebate_directly_cc_json
+      name: rebate_cc
       path: github.com/chain_code
       version: 1
 
@@ -70,7 +70,7 @@ ledger:
     proposalWaitTime: 12000000
   runWithTls: false
   cryptoConfigPath: crypto-config/peerOrganizations/
-  currentOrgName: org1
+  currentOrgName: peerOrg1
 
 server:
   port: 8082
