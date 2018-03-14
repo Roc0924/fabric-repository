@@ -33,11 +33,6 @@ public class FabricController {
     }
 
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public Boolean login() {
-        return fabricService.login();
-    }
-
 
     @RequestMapping(value = "/queryInstalledChaincodes", method = RequestMethod.GET)
     public List<ChainCodeDto> queryInstalledChaincodes() {

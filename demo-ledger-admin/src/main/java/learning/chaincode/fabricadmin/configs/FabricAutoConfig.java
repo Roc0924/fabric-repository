@@ -3,7 +3,10 @@ package learning.chaincode.fabricadmin.configs;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import learning.chaincode.fabricadmin.dtos.*;
+import learning.chaincode.fabricadmin.dtos.ChainCodeConfig;
+import learning.chaincode.fabricadmin.dtos.SampleOrg;
+import learning.chaincode.fabricadmin.dtos.SampleStore;
+import learning.chaincode.fabricadmin.dtos.SampleUser;
 import learning.chaincode.fabricadmin.utils.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.sdk.*;
@@ -15,18 +18,13 @@ import org.hyperledger.fabric.sdk.helper.Utils;
 import org.hyperledger.fabric.sdk.security.CryptoSuite;
 import org.hyperledger.fabric_ca.sdk.HFCAClient;
 import org.hyperledger.fabric_ca.sdk.RegistrationRequest;
-import org.hyperledger.fabric_ca.sdk.exception.EnrollmentException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -43,7 +41,6 @@ import static java.lang.String.format;
 @Configuration
 public class FabricAutoConfig {
 
-//    Log log = LogFactory.getLog(this.getClass());
 
     final LedgerProperties ledgerProperties;
 
@@ -70,15 +67,6 @@ public class FabricAutoConfig {
 
 
 
-
-
-
-
-
-
-
-
-
     /**
      * 自动注入hyperledger fabric 客户端
      * @param fabricConfigManager
@@ -100,11 +88,6 @@ public class FabricAutoConfig {
         Collection<SampleOrg> sampleOrgs = fabricConfigManager.getIntegrationSampleOrgs();
 
 
-
-
-
-
-
         for (SampleOrg sampleOrg : sampleOrgs) {
             sampleOrg.setCAClient(HFCAClient.createNewInstance(sampleOrg.getCALocation(), sampleOrg.getCAProperties()));
         }
@@ -115,17 +98,6 @@ public class FabricAutoConfig {
                 log.info("remove HFC.properties");
             }
         }
-
-
-
-
-
-
-
-
-
-
-
 
 
         final SampleStore sampleStore = new SampleStore(sampleStoreFile);
@@ -179,12 +151,10 @@ public class FabricAutoConfig {
                 user.setEnrollment(enrollment);
                 user.setMspId(mspid);
             }
-            sampleOrg.addUser(user); //Remember user belongs to this Org
+            sampleOrg.addUser(user);
 
             final String sampleOrgName = sampleOrg.getName();
             final String sampleOrgDomainName = sampleOrg.getDomainName();
-
-            // src/test/fixture/sdkintegration/e2e-2Orgs/channel/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/
 
             SampleUser peerOrgAdmin = sampleStore.getMember(sampleOrgName + "Admin", sampleOrgName, sampleOrg.getMSPID(),
                     Util.findFileSk(Paths.get(this.getClass().getResource("/").getPath(), ledgerProperties.getChannelPath(),
@@ -216,7 +186,7 @@ public class FabricAutoConfig {
      */
     @Bean(name = "channel")
     @Autowired
-    public Channel channel(FabricConfigManager fabricConfigManager, HFClient client) throws InvalidArgumentException, TransactionException, ProposalException, IOException {
+    public Channel channel(FabricConfigManager fabricConfigManager, HFClient client) {
 
         SampleOrg sampleOrg = fabricConfigManager.getIntegrationTestsSampleOrg("peerOrg1");
         String name = "foo";
@@ -298,7 +268,6 @@ public class FabricAutoConfig {
         //Create channel that has only one signer that is this orgs peer admin. If channel creation policy needed more signature they would need to be added too.
         Channel newChannel = client.newChannel(name, anOrderer, channelConfiguration, client.getChannelConfigurationSignature(channelConfiguration, sampleOrg.getPeerAdmin()));
 
-//        client
         for (String peerName : sampleOrg.getPeerNames()) {
             String peerLocation = sampleOrg.getPeerLocation(peerName);
 
@@ -335,168 +304,6 @@ public class FabricAutoConfig {
 
         return newChannel;
     }
-
-
-
-
-
-
-//
-//
-//    @Bean
-//    @Autowired
-//    @ConditionalOnMissingBean(LedgerOrgs.class)
-//    public LedgerOrgs ledgerOrgs(LedgerProperties ledgerProperties) {
-//        LedgerOrgs ledgerOrgs = new LedgerOrgs();
-//        Map<String, SampleOrg> ledgerOrgMap = new HashMap<>();
-//
-//        Map<String, OrgConfig> orgConfigs = ledgerProperties.getOrgs();
-//
-//        for (String orgStr : orgConfigs.keySet()) {
-//            OrgConfig orgConfig = orgConfigs.get(orgStr);
-//            SampleOrg ledgerOrg = new SampleOrg(orgConfig.getName(), orgConfig.getMspId());
-//
-//
-//            ledgerOrgs.getSampleOrgs().put(orgConfig.getName(), ledgerOrg);
-//            // set peers
-//            for (PeerConfig peerConfig : orgConfig.getPeers()) {
-//                ledgerOrg.addPeerLocation(peerConfig.getName(), grpcTLS(peerConfig.getUrl()));
-//            }
-//
-//            // set domainName
-//            ledgerOrg.setDomainName(orgConfig.getDomName());
-//
-//            // set orderers
-//            for (OrdererConfig ordererConfig : orgConfig.getOrderers()) {
-//                ledgerOrg.addOrdererLocation(ordererConfig.getName(), grpcTLS(ordererConfig.getUrl()));
-//            }
-//
-//            // set eventHubs
-//            for (EventHubConfig eventHubConfig : orgConfig.getEventHubs()) {
-//                ledgerOrg.addEventHubLocation(eventHubConfig.getName(), grpcTLS(eventHubConfig.getUrl()));
-//            }
-//
-//            // set ca location
-//            ledgerOrg.setCALocation(httpTLSify(orgConfig.getCaLocation()));
-//
-//            if (ledgerProperties.isRunWithTls()) {
-//                String cert = "src/test/fixture/sdkintegration/e2e-2Orgs/channel/crypto-config/peerOrganizations/DNAME/ca/ca.DNAME-cert.pem"
-//                        .replaceAll("DNAME", orgConfig.getDomName());
-//                File certFile = new File(cert);
-//                if (!certFile.exists() || !certFile.isFile()) {
-//                    throw new RuntimeException("missing cert file " + certFile.getAbsolutePath());
-//                }
-//                Properties properties = new Properties();
-//                properties.setProperty("pemFile", certFile.getAbsolutePath());
-//
-//                properties.setProperty("allowAllHostNames", "true"); //testing environment only NOT FOR PRODUCTION!
-//
-//                ledgerOrg.setCAProperties(properties);
-//            }
-//
-//
-//
-//
-//
-//
-//            try {
-//                File ledgerStoreFile = new File(System.getProperty("java.io.tmpdir") + "/HFC.properties");
-//                if (ledgerStoreFile.exists()) {
-//                    boolean result = ledgerStoreFile.delete();
-//                    if (result) {
-//                        log.info("remove HFC.properties");
-//                    }
-//                }
-//
-//                final SampleStore sampleStore = new SampleStore(ledgerStoreFile);
-//
-//
-//                // set admin
-//
-//                ledgerOrg.setCAClient(HFCAClient.createNewInstance(ledgerOrg.getCALocation(), ledgerOrg.getCAProperties()));
-//
-//
-//                HFCAClient hfcaClient = ledgerOrg.getCAClient();
-//                hfcaClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
-//                UserConfig userConfig = ledgerProperties.getUsers().get("admin");
-//                SampleUser admin = sampleStore.getMember(userConfig.getName(), orgConfig.getName());
-//
-//                if (!admin.isEnrolled()) {
-//                    admin.setEnrollment(hfcaClient.enroll(admin.getName(), userConfig.getSecret()));
-//                    admin.setMspId(ledgerOrg.getMSPID());
-//                }
-//
-//                ledgerOrg.setAdmin(admin);
-//
-//
-//                // set peerAdmin
-//                SampleUser peerOrgAdmin = sampleStore.getMember(orgConfig.getName() + "Admin", orgConfig.getName(), ledgerOrg.getMSPID(),
-//                        Util.findFileSk(
-//                                Paths.get(
-//                                        this.getClass().getResource("/").getPath(),
-//                                        ledgerProperties.getChannelPath(),
-//                                        ledgerProperties.getCryptoConfigPath(),
-//                                        ledgerOrg.getDomainName(),
-//                                        format(
-//                                                "/users/Admin@%s/msp/keystore",
-//                                                ledgerOrg.getDomainName()
-//                                        )
-//                                ).toFile()
-//                        ),
-//                        Paths.get(
-//                                this.getClass().getResource("/").getPath(),
-//                                ledgerProperties.getChannelPath(),
-//                                ledgerProperties.getCryptoConfigPath(),
-//                                ledgerOrg.getDomainName(),
-//                                format(
-//                                        "/users/Admin@%s/msp/signcerts/Admin@%s-cert.pem",
-//                                        ledgerOrg.getDomainName(),
-//                                        ledgerOrg.getDomainName()
-//                                )
-//                        ).toFile()
-//                );
-//
-//                ledgerOrg.setPeerAdmin(peerOrgAdmin); //A special user that can create channels, join peers and install chaincode
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } catch (NoSuchAlgorithmException e) {
-//                e.printStackTrace();
-//            } catch (org.hyperledger.fabric_ca.sdk.exception.InvalidArgumentException e) {
-//                e.printStackTrace();
-//            } catch (EnrollmentException e) {
-//                e.printStackTrace();
-//            } catch (NoSuchProviderException e) {
-//                e.printStackTrace();
-//            } catch (InvalidKeySpecException e) {
-//                e.printStackTrace();
-//            }
-//
-//
-//            ledgerOrgMap.put(ledgerOrg.getName(), ledgerOrg);
-//        }
-//
-//        ledgerOrgs.setSampleOrgs(ledgerOrgMap);
-//        return ledgerOrgs;
-//    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

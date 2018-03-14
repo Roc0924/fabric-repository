@@ -1,7 +1,6 @@
 package learning.chaincode.fabricadmin.services;
 
 
-import learning.chaincode.fabricadmin.configs.FabricConfig;
 import learning.chaincode.fabricadmin.configs.FabricConfigManager;
 import learning.chaincode.fabricadmin.configs.LedgerProperties;
 import learning.chaincode.fabricadmin.dtos.ChainCodeDto;
@@ -37,8 +36,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class FabricService {
     private final HFClient hfClient;
 
-//    private final FabricConfig config;
-
     private final Channel channel;
 
     private final FabricConfigManager fabricConfigManager;
@@ -55,14 +52,12 @@ public class FabricService {
     @Autowired
     public FabricService(
             HFClient hfClient,
-//            FabricConfig config,
             Channel channel,
             FabricConfigManager fabricConfigManager,
             LedgerProperties ledgerProperties,
             ChaincodeID chaincodeID
     ) {
         this.hfClient = hfClient;
-//        this.config = config;
         this.channel = channel;
         this.fabricConfigManager = fabricConfigManager;
         this.ledgerProperties = ledgerProperties;
@@ -84,12 +79,7 @@ public class FabricService {
             return chainCodeDto;
         }
         try {
-
-            final String channelName = channel.getName();
-//            boolean isFooChain = config.getFooChannelName().equals(channelName);
-            boolean isFooChain = ledgerProperties.isRunWithTls();
             channel.setTransactionWaitTime(fabricConfigManager.getTransactionWaitTime());
-//            channel.setDeployWaitTime(Integer.parseInt(config.getDeployWaitTime()));
             channel.setDeployWaitTime(ledgerProperties.getTimes().get("deployWaitTime").intValue());
 
             Collection<Orderer> orderers = channel.getOrderers();
@@ -104,15 +94,9 @@ public class FabricService {
             InstallProposalRequest installProposalRequest = hfClient.newInstallProposalRequest();
             installProposalRequest.setChaincodeID(chaincodeID);
 
-            if (isFooChain) {
-                // on foo chain install from directory.
-                installProposalRequest.setChaincodeSourceLocation(new File(this.getClass().getResource("/").getPath()));
-            } else {
-                log.error("chain code error");
-                throw new Exception("chain code error");
-            }
+            installProposalRequest.setChaincodeSourceLocation(new File(this.getClass().getResource("/").getPath()));
 
-//            installProposalRequest.setChaincodeVersion(config.getChainCodeVersion());
+
             installProposalRequest.setChaincodeVersion(ledgerProperties.getChainCodes().get("rebate_directly_cc_json").getVersion());
 
             int numInstallProposal = 0;
@@ -163,11 +147,8 @@ public class FabricService {
             successful.clear();
             failed.clear();
 
-            if (isFooChain) {  //Send responses both ways with specifying peers and by using those on the channel.
-                responses = channel.sendInstantiationProposal(instantiateProposalRequest, channel.getPeers());
-            } else {
-                responses = channel.sendInstantiationProposal(instantiateProposalRequest);
-            }
+            responses = channel.sendInstantiationProposal(instantiateProposalRequest, channel.getPeers());
+
             for (ProposalResponse response : responses) {
                 if (response.isVerified() && response.getStatus() == ProposalResponse.Status.SUCCESS) {
                     successful.add(response);
@@ -280,31 +261,12 @@ public class FabricService {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             UpgradeProposalRequest upgradeProposalRequest = hfClient.newUpgradeProposalRequest();
 
             upgradeProposalRequest.setChaincodeID(chaincodeID);
             upgradeProposalRequest.setProposalWaitTime(12000000L);
             upgradeProposalRequest.setFcn("init");
-//            upgradeProposalRequest.setArgs(new String[] {});
-            upgradeProposalRequest.setArgs(new String[] {"a", "500", "b", "1000"});
+            upgradeProposalRequest.setArgs(new String[] {});
             ChaincodeEndorsementPolicy chaincodeEndorsementPolicy = new ChaincodeEndorsementPolicy();
             chaincodeEndorsementPolicy.fromYamlFile(new File(this.getClass().getResource("/").getPath() + "/chaincodeendorsementpolicy.yaml"));
 
@@ -351,9 +313,4 @@ public class FabricService {
         return upgradeChainCode(newChaincodeID, sampleOrg);
     }
 
-    public Boolean login() {
-        SampleOrg sampleOrg = fabricConfigManager.getIntegrationTestsSampleOrg("peerOrg1");
-
-        return null;
-    }
 }
