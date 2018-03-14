@@ -65,7 +65,7 @@ ledger:
 
   times:
     gossipWaitTime: 500000
-    invokeWaitTime: 10000000
+    invokeWaitTime: 10
     deployWaitTime: 12000000
     proposalWaitTime: 12000000
   runWithTls: false

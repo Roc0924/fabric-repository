@@ -44,6 +44,16 @@ public class FabricController {
         return fabricService.queryInstalledChainCodeByName(chainCodeName);
     }
 
+
+    @RequestMapping(value = "/queryInstalledChaincodeByNameAndVersion", method = RequestMethod.GET)
+    public ChainCodeDto queryInstalledChaincodeByNameAndVersion(
+            @RequestParam(name = "name") String name,
+            @RequestParam(name = "version") String version
+    ) {
+        return fabricService.queryInstalledChainCodeByNameAndVersion(name, version);
+    }
+
+
     @RequestMapping(value = "/upgradeInstalledChaincode", method = RequestMethod.PUT)
     public ChainCodeDto upgradeInstalledChaincode(@RequestBody ChainCodeDto chainCodeDto) {
         ChaincodeID newChaincodeID = ChaincodeID.newBuilder().setName(chainCodeDto.getName())

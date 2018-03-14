@@ -200,10 +200,21 @@ public class FabricService {
     }
 
 
-    public ChainCodeDto queryInstalledChainCodeByName(String ChainCodeName) {
+    public ChainCodeDto queryInstalledChainCodeByName(String name) {
         List<ChainCodeDto> chainCodeDtos = queryInstalledChainCodes();
         for (ChainCodeDto chainCodeDto : chainCodeDtos) {
-            if (chainCodeDto.getName().equals(ChainCodeName)) {
+            if (chainCodeDto.getName().equals(name)) {
+                return chainCodeDto;
+            }
+        }
+        return null;
+    }
+
+    public ChainCodeDto queryInstalledChainCodeByNameAndVersion(String name, String version) {
+        List<ChainCodeDto> chainCodeDtos = queryInstalledChainCodes();
+        for (ChainCodeDto chainCodeDto : chainCodeDtos) {
+            if (chainCodeDto.getName().equals(name)
+                    && chainCodeDto.getVersion().equals(version)) {
                 return chainCodeDto;
             }
         }
@@ -292,8 +303,7 @@ public class FabricService {
                 }
             }
 
-            Object obj = channel.sendTransaction(successful).get(fabricConfigManager.getTransactionWaitTime(), TimeUnit.SECONDS);
-            log.info("type: {}", obj.getClass());
+            channel.sendTransaction(successful).get(fabricConfigManager.getTransactionWaitTime(), TimeUnit.SECONDS);
 
         } catch (ChaincodeEndorsementPolicyParseException | IOException | InvalidArgumentException
                 | ProposalException | InterruptedException | ExecutionException | TimeoutException e) {
@@ -303,7 +313,7 @@ public class FabricService {
         if (null != successful) {
             log.info("chain code:[{}] version changed from [{}] to [{}]", installedChainCodeDto.getName(),
                     installedChainCodeDto.getVersion(), chaincodeID.getVersion());
-            return queryInstalledChainCodeByName(chaincodeID.getName());
+            return queryInstalledChainCodeByNameAndVersion(chaincodeID.getName(), chaincodeID.getVersion());
         }
         return null;
     }
@@ -312,5 +322,7 @@ public class FabricService {
         SampleOrg sampleOrg = fabricConfigManager.getIntegrationTestsSampleOrg("peerOrg1");
         return upgradeChainCode(newChaincodeID, sampleOrg);
     }
+
+
 
 }
