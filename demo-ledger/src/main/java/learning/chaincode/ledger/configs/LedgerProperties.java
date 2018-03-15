@@ -28,6 +28,9 @@ public class LedgerProperties {
     private boolean runWithTls;                                                        // 是否开启tls
     private String cryptoConfigPath;                                                   // crypto配置路径
     private String currentOrgName;                                                     // 当前组织名称
+    private String currentUserName;
+    private String currentChaincodeVersion;
+    private String currentChaincodeName;
 
     private final HashMap<String, LedgerOrg> ledgerOrgs = new HashMap<>();             //
 
@@ -120,5 +123,29 @@ public class LedgerProperties {
 
     public void setChainCodes(Map<String, ChainCodeConfig> chainCodes) {
         this.chainCodes = chainCodes;
+    }
+
+    public String getCurrentUserName() {
+        return currentUserName;
+    }
+
+    public void setCurrentUserName(String currentUserName) {
+        this.currentUserName = currentUserName;
+    }
+
+    public String getCurrentChaincodeVersion() {
+        return currentChaincodeVersion;
+    }
+
+    public void setCurrentChaincodeVersion(String currentChaincodeVersion) {
+        this.currentChaincodeVersion = currentChaincodeVersion;
+    }
+
+    public String getCurrentChaincodeName() {
+        return currentChaincodeName;
+    }
+
+    public void setCurrentChaincodeName(String currentChaincodeName) {
+        this.currentChaincodeName = currentChaincodeName;
     }
 }

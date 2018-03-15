@@ -2,6 +2,7 @@ package learning.chaincode.ledger.controllers;
 
 
 import learning.chaincode.ledger.dtos.ChainCodeDto;
+import learning.chaincode.ledger.entitys.RebateAccount;
 import learning.chaincode.ledger.services.FabricService;
 import org.hyperledger.fabric.sdk.ChaincodeID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,48 +28,19 @@ public class FabricController {
         this.fabricService = fabricService;
     }
 
-    @RequestMapping(value = "/injectBudget", method = RequestMethod.GET)
-    public ChainCodeDto injectBudget() {
-        return fabricService.installChainCode();
+    @RequestMapping(value = "/createAccount", method = RequestMethod.GET)
+    public Boolean createAccount(
+            @RequestBody RebateAccount rebateAccount) {
+
+        return fabricService.createAccount(rebateAccount);
     }
 
 
+    @RequestMapping(value = "/queryAccount", method = RequestMethod.GET)
+    public RebateAccount queryAccount(
+            @RequestParam(name = "planId") String planId) {
 
-    @RequestMapping(value = "/queryInstalledChaincodes", method = RequestMethod.GET)
-    public List<ChainCodeDto> queryInstalledChaincodes() {
-        return fabricService.queryInstalledChainCodes();
-    }
-
-    @RequestMapping(value = "/queryInstalledChaincodeByName", method = RequestMethod.GET)
-    public ChainCodeDto queryInstalledChaincodeByName(@RequestParam(name = "chainCodeName") String chainCodeName) {
-        return fabricService.queryInstalledChainCodeByName(chainCodeName);
-    }
-
-
-    @RequestMapping(value = "/queryInstalledChaincodeByNameAndVersion", method = RequestMethod.GET)
-    public ChainCodeDto queryInstalledChaincodeByNameAndVersion(
-            @RequestParam(name = "name") String name,
-            @RequestParam(name = "version") String version
-    ) {
-        return fabricService.queryInstalledChainCodeByNameAndVersion(name, version);
-    }
-
-
-    @RequestMapping(value = "/upgradeInstalledChaincode", method = RequestMethod.PUT)
-    public ChainCodeDto upgradeInstalledChaincode(@RequestBody ChainCodeDto chainCodeDto) {
-        ChaincodeID newChaincodeID = ChaincodeID.newBuilder().setName(chainCodeDto.getName())
-                .setPath(chainCodeDto.getPath()).setVersion(chainCodeDto.getVersion()).build();
-
-        return fabricService.upgradeInstalledChaincode(newChaincodeID);
-    }
-
-
-    @RequestMapping(value = "/queryBlockById", method = RequestMethod.GET)
-    public ChainCodeDto queryBlockById(@RequestBody ChainCodeDto chainCodeDto) {
-        ChaincodeID newChaincodeID = ChaincodeID.newBuilder().setName(chainCodeDto.getName())
-                .setPath(chainCodeDto.getPath()).setVersion(chainCodeDto.getVersion()).build();
-
-        return fabricService.upgradeInstalledChaincode(newChaincodeID);
+        return fabricService.queryAccount(planId);
     }
 
 }

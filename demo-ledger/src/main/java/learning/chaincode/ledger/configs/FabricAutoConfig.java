@@ -56,7 +56,8 @@ public class FabricAutoConfig {
     @Bean(name = "chainCodeID")
     ChaincodeID chaincodeID() {
 
-        ChainCodeConfig chainCodeConfig = ledgerProperties.getChainCodes().get("rebate_directly_cc_json");
+        ChainCodeConfig chainCodeConfig = ledgerProperties.getChainCodes().get(ledgerProperties.getCurrentChaincodeName());
+
 
         return ChaincodeID.newBuilder().setName(chainCodeConfig.getName())
                 .setVersion(chainCodeConfig.getVersion())

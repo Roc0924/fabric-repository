@@ -58,7 +58,7 @@ ledger:
       path: github.com/chain_code
       version: 1
   chainCodes:
-    rebate_directly_cc_json:
+    rebate_cc:
       name: rebate_cc
       path: github.com/chain_code
       version: 1
@@ -71,6 +71,9 @@ ledger:
   runWithTls: false
   cryptoConfigPath: crypto-config/peerOrganizations/
   currentOrgName: peerOrg1
+  currentUserName: user1
+  currentChaincodeVersion: 4
+  currentChaincodeName: rebate_cc
 
 server:
   port: 8082
