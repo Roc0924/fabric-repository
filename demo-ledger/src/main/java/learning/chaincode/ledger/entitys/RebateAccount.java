@@ -11,11 +11,11 @@ import lombok.Data;
  */
 @Data
 public class RebateAccount {
-    private String accountId;
-    private Long amount;
-    private Long expectAmount;
-    private String status;
-    private String details;
-    private String memo;
+    private String AccountId;
+    private Long Amount;
+    private Long ExpectAmount;
+    private String Status;
+    private String Details;
+    private String Memo;
 
 }

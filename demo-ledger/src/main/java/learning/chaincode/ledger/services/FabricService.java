@@ -2,6 +2,7 @@ package learning.chaincode.ledger.services;
 
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import learning.chaincode.ledger.configs.FabricConfigManager;
 import learning.chaincode.ledger.configs.LedgerProperties;
 import learning.chaincode.ledger.dtos.ChainCodeDto;
@@ -339,20 +340,48 @@ public class FabricService {
 //    }
 
 
-
-
+    /**
+     * 创建账户
+     * @param rebateAccount
+     * @return
+     */
     public Boolean createAccount(RebateAccount rebateAccount) {
         Gson gson = new Gson();
         String rebateAccountStr = gson.toJson(rebateAccount);
-
         writeAction(new String[]{"createAccount", rebateAccountStr});
         return null;
     }
 
+    /**
+     * 查询账户
+     * @param accountId
+     * @return
+     */
     public RebateAccount queryAccount(String accountId) {
         Gson gson = new Gson();
         String rebateAccountStr = readAction(new String[]{"queryAccount", accountId});
-        RebateAccount rebateAccount = gson.fromJson(rebateAccountStr, RebateAccount.class);
+        RebateAccount rebateAccount = null;
+        if (null != rebateAccountStr) {
+            gson.fromJson(rebateAccountStr, RebateAccount.class);
+        }
+        return rebateAccount;
+    }
+
+
+    /**
+     * 删除账户
+     * @param accountId
+     * @return
+     */
+    public RebateAccount deleteAccount(String accountId) {
+        Gson gson = new Gson();
+        String rebateAccountStr = writeAction(new String[]{"deleteAccount", accountId});
+
+        RebateAccount rebateAccount = null;
+        if (null != rebateAccountStr) {
+            rebateAccount = gson.fromJson(rebateAccountStr, RebateAccount.class);
+        }
+
         return rebateAccount;
     }
 
@@ -408,6 +437,8 @@ public class FabricService {
 
             channel.sendTransaction(successful).get(fabricConfigManager.getTransactionWaitTime(), TimeUnit.SECONDS);
 
+            return transactionPropResp.iterator().next().getProposalResponse().getResponse().getPayload().toStringUtf8();
+
         } catch (InvalidArgumentException | ProposalException | ExecutionException | InterruptedException | TimeoutException e) {
             e.printStackTrace();
         }
@@ -462,4 +493,5 @@ public class FabricService {
 
         return null;
     }
+
 }

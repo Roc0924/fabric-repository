@@ -28,7 +28,7 @@ public class FabricController {
         this.fabricService = fabricService;
     }
 
-    @RequestMapping(value = "/createAccount", method = RequestMethod.GET)
+    @RequestMapping(value = "/createAccount", method = RequestMethod.POST)
     public Boolean createAccount(
             @RequestBody RebateAccount rebateAccount) {
 
@@ -38,9 +38,16 @@ public class FabricController {
 
     @RequestMapping(value = "/queryAccount", method = RequestMethod.GET)
     public RebateAccount queryAccount(
-            @RequestParam(name = "planId") String planId) {
+            @RequestParam(name = "accountId") String accountId) {
 
-        return fabricService.queryAccount(planId);
+        return fabricService.queryAccount(accountId);
+    }
+
+    @RequestMapping(value = "/deleteAccount", method = RequestMethod.GET)
+    public RebateAccount deleteAccount(
+            @RequestParam(name = "accountId") String accountId) {
+        return fabricService.deleteAccount(accountId);
+
     }
 
 }

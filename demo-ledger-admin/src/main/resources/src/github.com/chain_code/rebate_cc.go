@@ -23,11 +23,11 @@ type RebateChaincode struct {
 }
 
 type RebateAccount struct{
-	accountId string
-	amount,expectAmount  int64
-	status string // normal,frozen,stop
-	details string
-	memo string
+	AccountId string
+	Amount,ExpectAmount  int64
+	Status string // normal,frozen,stop
+	Details string
+	Memo string
 }
 
 func (chaincode *RebateChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
@@ -130,7 +130,11 @@ func (chaincode *RebateChaincode) createAccount(stub shim.ChaincodeStubInterface
 
 	rebateAccountStr := args[1]
 	var rebateAccount RebateAccount
+	fmt.Println(rebateAccountStr);
 	err = json.Unmarshal([]byte(rebateAccountStr),&rebateAccount)
+	fmt.Printf("rebate account : accountId:%s, amount:%d, expectAmount:%d, status:%s, details:%s, memo:%s\n",
+		rebateAccount.AccountId, rebateAccount.Amount, rebateAccount.ExpectAmount, rebateAccount.Status,
+			rebateAccount.Details, rebateAccount.Memo)
 
 	if nil != err {
 		return shim.Error("unmarshal error :" + rebateAccountStr);
@@ -151,7 +155,7 @@ func (chaincode *RebateChaincode) createAccount(stub shim.ChaincodeStubInterface
 
 
 	//whether the account has registered
-	record, recordErr := stub.GetState(rebateAccount.accountId)
+	record, recordErr := stub.GetState(rebateAccount.AccountId)
 	if nil != recordErr {
 		return shim.Error("Inner Error" + recordErr.Error())
 	}
@@ -165,9 +169,9 @@ func (chaincode *RebateChaincode) createAccount(stub shim.ChaincodeStubInterface
 
 	//byteObject,_ := json.Marshal(rebateAccount)
 	// Put the key into the state in ledger
-	err = stub.PutState(rebateAccount.accountId,[]byte(rebateAccountStr))
-	if err != nil {
-		return shim.Error("Failed to delete state")
+	putErr := stub.PutState(rebateAccount.AccountId,[]byte(rebateAccountStr))
+	if putErr != nil {
+		return shim.Error("Failed to put state, error:" + putErr.Error())
 	}
 
 	return shim.Success(nil)
@@ -190,19 +194,24 @@ func (chaincode *RebateChaincode) createPlan(stub shim.ChaincodeStubInterface, a
 }
 // Deletes an entity from state
 func (chaincode *RebateChaincode) deleteAccount(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	if len(args) != 1 {
-		return shim.Error("Incorrect number of arguments. Expecting 1")
+	if len(args) != 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
 	}
 
-	A := args[0]
+	accountId := args[1]
+
+	accountStateByte, getErr := stub.GetState(accountId)
+	if nil != getErr {
+		shim.Error("get state of " + accountId + " error:" + getErr.Error())
+	}
 
 	// Delete the key from the state in ledger
-	err := stub.DelState(A)
+	err := stub.DelState(accountId)
 	if err != nil {
-		return shim.Error("Failed to delete state")
+		return shim.Error("Failed to delete state， error:" + err.Error())
 	}
 
-	return shim.Success(nil)
+	return shim.Success(accountStateByte)
 }
 
 // query callback representing the query of a chaincode
@@ -308,7 +317,7 @@ func (chaincode *RebateChaincode) addAmountFromBudget(stub shim.ChaincodeStubInt
 	if err != nil{
 		return shim.Error(err.Error())
 	}
-	account.amount = account.amount + val
+	account.Amount = account.Amount + val
 	accountByte,err = json.Marshal(account)
 	if err != nil{
 		jsonResp :="{\"Error\":\"account "+accountId +" format err \"}"
@@ -369,7 +378,7 @@ func (chaincode *RebateChaincode) addExpectAmountFromBudget(stub shim.ChaincodeS
 	if err != nil{
 		return shim.Error(err.Error())
 	}
-	account.expectAmount = account.expectAmount + val
+	account.ExpectAmount = account.ExpectAmount + val
 	accountByte,err = json.Marshal(account)
 	if err != nil{
 		jsonResp :="{\"Error\":\"account "+accountId +" format err \"}"
@@ -429,7 +438,7 @@ func (chaincode *RebateChaincode) rollBackExpectRebate(stub shim.ChaincodeStubIn
 	if err != nil{
 		return shim.Error(err.Error())
 	}
-	account.expectAmount = account.expectAmount - val
+	account.ExpectAmount = account.ExpectAmount - val
 	accountByte,err = json.Marshal(account)
 	if err != nil{
 		jsonResp :="{\"Error\":\"account "+accountId +" format err \"}"
