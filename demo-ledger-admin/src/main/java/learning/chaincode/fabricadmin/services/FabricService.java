@@ -110,7 +110,7 @@ public class FabricService {
             installProposalRequest.setChaincodeSourceLocation(new File(this.getClass().getResource("/").getPath()));
 
 
-            installProposalRequest.setChaincodeVersion(ledgerProperties.getChainCodes().get("rebate_directly_cc_json").getVersion());
+            installProposalRequest.setChaincodeVersion(ledgerProperties.getChainCodes().get(currentChaincodeName).getVersion());
 
             int numInstallProposal = 0;
 

@@ -55,4 +55,40 @@ public class FabricController {
 
     }
 
+    @RequestMapping(value = "/addAmountFromBudget", method = RequestMethod.GET)
+    public void addAmountFromBudget(
+            @RequestParam(name = "accountId") String accountId,
+            @RequestParam(name = "planId") String planId,
+            @RequestParam(name = "delta") Integer delta) {
+        fabricService.addAmountFromBudget(planId, accountId, delta);
+
+    }
+
+    @RequestMapping(value = "/rollBackAmountToBudget", method = RequestMethod.GET)
+    public void rollBackAmountToBudget(
+            @RequestParam(name = "accountId") String accountId,
+            @RequestParam(name = "planId") String planId,
+            @RequestParam(name = "delta") Integer delta) {
+        fabricService.rollBackAmountToBudget(accountId, planId, delta);
+
+    }
+
+    @RequestMapping(value = "/addExpectAmountFromBudget", method = RequestMethod.GET)
+    public void addExpectAmountFromBudget(
+            @RequestParam(name = "accountId") String accountId,
+            @RequestParam(name = "planId") String planId,
+            @RequestParam(name = "delta") Integer delta) {
+        fabricService.addExpectAmountFromBudget(planId, accountId, delta);
+
+    }
+
+    @RequestMapping(value = "/rollBackExpectAmountToBudget", method = RequestMethod.GET)
+    public void rollBackExpectAmountToBudget(
+            @RequestParam(name = "accountId") String accountId,
+            @RequestParam(name = "planId") String planId,
+            @RequestParam(name = "delta") Integer delta) {
+        fabricService.rollBackExpectAmountToBudget(accountId, planId, delta);
+
+    }
+
 }

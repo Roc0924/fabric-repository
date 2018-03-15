@@ -363,7 +363,7 @@ public class FabricService {
         String rebateAccountStr = readAction(new String[]{"queryAccount", accountId});
         RebateAccount rebateAccount = null;
         if (null != rebateAccountStr) {
-            gson.fromJson(rebateAccountStr, RebateAccount.class);
+            rebateAccount = gson.fromJson(rebateAccountStr, RebateAccount.class);
         }
         return rebateAccount;
     }
@@ -438,6 +438,34 @@ public class FabricService {
         }
 
     }
+
+
+
+
+    public void addAmountFromBudget(String planId, String accountId, Integer delta) {
+
+        String rebateAccountStr = writeAction(new String[]{"addAmountFromBudget", planId, accountId, delta.toString()});
+
+    }
+
+    public void rollBackAmountToBudget(String planId, String accountId, Integer delta) {
+
+        String rebateAccountStr = writeAction(new String[]{"rollBackAmountToBudget", accountId, planId, delta.toString()});
+
+    }
+
+    public void addExpectAmountFromBudget(String planId, String accountId, Integer delta) {
+
+        String rebateAccountStr = writeAction(new String[]{"addExpectAmountFromBudget", planId, accountId, delta.toString()});
+
+    }
+
+    public void rollBackExpectAmountToBudget(String planId, String accountId, Integer delta) {
+
+        String rebateAccountStr = writeAction(new String[]{"rollBackExpectAmountToBudget", accountId, planId, delta.toString()});
+
+    }
+
 
 
     /**

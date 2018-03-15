@@ -72,7 +72,7 @@ ledger:
   cryptoConfigPath: crypto-config/peerOrganizations/
   currentOrgName: peerOrg1
   currentUserName: user1
-  currentChaincodeVersion: 4
+  currentChaincodeVersion: 1
   currentChaincodeName: rebate_cc
 
 server:
