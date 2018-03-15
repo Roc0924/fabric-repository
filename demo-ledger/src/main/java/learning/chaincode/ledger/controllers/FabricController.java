@@ -1,16 +1,12 @@
 package learning.chaincode.ledger.controllers;
 
 
-import learning.chaincode.ledger.dtos.ChainCodeDto;
 import learning.chaincode.ledger.entitys.RebateAccount;
 import learning.chaincode.ledger.services.FabricService;
-import org.hyperledger.fabric.sdk.ChaincodeID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Create with IntelliJ IDEA
@@ -53,7 +49,7 @@ public class FabricController {
     }
 
     @RequestMapping(value = "/queryAccountHistory", method = RequestMethod.GET)
-    public ConcurrentMap<String, Object> queryAccountHistory(
+    public Map<String, Object> queryAccountHistory(
             @RequestParam(name = "accountId") String accountId) {
         return fabricService.queryAccountHistory(accountId);
 

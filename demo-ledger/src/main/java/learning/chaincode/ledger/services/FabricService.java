@@ -392,13 +392,13 @@ public class FabricService {
      * @param accountId
      * @return
      */
-    public ConcurrentMap<String, Object> queryAccountHistory(String accountId) {
-        ConcurrentHashMap<String, Object> result = new ConcurrentHashMap();
+    public Map<String, Object> queryAccountHistory(String accountId) {
+        Map<String, Object> result = new HashMap<>();
 
         String historyStr = readAction(new String[]{"queryHistory", accountId});
 
 
-        List<ConcurrentMap<String,Object>> resultList = new Gson().fromJson(historyStr, new TypeToken<ArrayList<HashMap<String,Object>>>(){}.getType());
+        List<Map<String,Object>> resultList = new Gson().fromJson(historyStr, new TypeToken<ArrayList<HashMap<String,Object>>>(){}.getType());
 
 
         formatHistoryList(resultList);
@@ -409,14 +409,16 @@ public class FabricService {
         return result;
     }
 
-    private void formatHistoryList(List<ConcurrentMap<String, Object>> resultList) {
-        resultList.iterator();
-//        ConcurrentMap<String, Object> resultConcurrent = new ConcurrentHashMap<>();
+
+    /**
+     * 格式化返回历史列表
+     * @param resultList
+     */
+    private void formatHistoryList(List<Map<String, Object>> resultList) {
 
 
 
         for (Map<String, Object> result : resultList) {
-//            ConcurrentSkipListSet<StringBuffer> set = (ConcurrentSkipListSet<String>) result.keySet();
             Set<String> set = new TreeSet<>();
             set.addAll(result.keySet());
             for (String key : set) {
