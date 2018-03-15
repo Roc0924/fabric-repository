@@ -442,27 +442,34 @@ public class FabricService {
 
 
 
-    public void addAmountFromBudget(String planId, String accountId, Integer delta) {
+    public void addAmountFromBudget(String planId, String accountId, Integer delta, String kid) {
 
-        String rebateAccountStr = writeAction(new String[]{"addAmountFromBudget", planId, accountId, delta.toString()});
 
-    }
 
-    public void rollBackAmountToBudget(String planId, String accountId, Integer delta) {
-
-        String rebateAccountStr = writeAction(new String[]{"rollBackAmountToBudget", accountId, planId, delta.toString()});
+        String rebateAccountStr = writeAction(new String[]{"addAmountFromBudget", planId, accountId, delta.toString(), kid});
+        log.info(rebateAccountStr);
 
     }
 
-    public void addExpectAmountFromBudget(String planId, String accountId, Integer delta) {
+    public void rollBackAmountToBudget(String planId, String accountId, Integer delta, String kid) {
 
-        String rebateAccountStr = writeAction(new String[]{"addExpectAmountFromBudget", planId, accountId, delta.toString()});
+        String rebateAccountStr = writeAction(new String[]{"rollBackAmountToBudget", accountId, planId, delta.toString(), kid});
+        log.info(rebateAccountStr);
 
     }
 
-    public void rollBackExpectAmountToBudget(String planId, String accountId, Integer delta) {
+    public void addExpectAmountFromBudget(String planId, String accountId, Integer delta, String kid) {
 
-        String rebateAccountStr = writeAction(new String[]{"rollBackExpectAmountToBudget", accountId, planId, delta.toString()});
+        String rebateAccountStr = writeAction(new String[]{"addExpectAmountFromBudget", planId, accountId, delta.toString(), kid});
+        log.info(rebateAccountStr);
+
+    }
+
+    public void rollBackExpectAmountToBudget(String planId, String accountId, Integer delta, String kid) {
+
+        String rebateAccountStr = writeAction(new String[]{"rollBackExpectAmountToBudget", accountId, planId, delta.toString(), kid});
+        log.info(rebateAccountStr);
+
 
     }
 
