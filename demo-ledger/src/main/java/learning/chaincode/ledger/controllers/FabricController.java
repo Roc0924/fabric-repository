@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Create with IntelliJ IDEA
@@ -47,6 +49,13 @@ public class FabricController {
     public RebateAccount deleteAccount(
             @RequestParam(name = "accountId") String accountId) {
         return fabricService.deleteAccount(accountId);
+
+    }
+
+    @RequestMapping(value = "/queryAccountHistory", method = RequestMethod.GET)
+    public ConcurrentMap<String, Object> queryAccountHistory(
+            @RequestParam(name = "accountId") String accountId) {
+        return fabricService.queryAccountHistory(accountId);
 
     }
 

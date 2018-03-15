@@ -9,6 +9,7 @@ import learning.chaincode.ledger.dtos.ChainCodeDto;
 import learning.chaincode.ledger.entitys.ChainCodeConfig;
 import learning.chaincode.ledger.entitys.LedgerOrg;
 import learning.chaincode.ledger.entitys.RebateAccount;
+import learning.chaincode.ledger.utils.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.protos.peer.Query;
 import org.hyperledger.fabric.sdk.*;
@@ -22,9 +23,9 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -386,6 +387,55 @@ public class FabricService {
     }
 
 
+    /**
+     * 查询账户历史
+     * @param accountId
+     * @return
+     */
+    public ConcurrentMap<String, Object> queryAccountHistory(String accountId) {
+        ConcurrentHashMap<String, Object> result = new ConcurrentHashMap();
+
+        String historyStr = readAction(new String[]{"queryHistory", accountId});
+
+
+        List<ConcurrentMap<String,Object>> resultList = new Gson().fromJson(historyStr, new TypeToken<ArrayList<HashMap<String,Object>>>(){}.getType());
+
+
+        formatHistoryList(resultList);
+
+        result.put("accountId", accountId);
+        result.put("history", resultList);
+
+        return result;
+    }
+
+    private void formatHistoryList(List<ConcurrentMap<String, Object>> resultList) {
+        resultList.iterator();
+//        ConcurrentMap<String, Object> resultConcurrent = new ConcurrentHashMap<>();
+
+
+
+        for (Map<String, Object> result : resultList) {
+//            ConcurrentSkipListSet<StringBuffer> set = (ConcurrentSkipListSet<String>) result.keySet();
+            Set<String> set = new TreeSet<>();
+            set.addAll(result.keySet());
+            for (String key : set) {
+                if (key.contains("_")) {
+                    Object data = result.get(key);
+                    result.remove(key);
+                    result.put(Util.lineToHump(key), data);
+                }
+                if (key.equals("value")) {
+                    String value = result.get(key).toString();
+                    result.remove(key);
+
+                    new Gson().fromJson(Util.Base64Decoder(value), new TypeToken<HashMap<String, Object>>(){}.getType());
+                    result.put(key, new Gson().fromJson(Util.Base64Decoder(value), new TypeToken<HashMap<String, Object>>(){}.getType()));
+                }
+            }
+        }
+
+    }
 
 
     /**
@@ -493,5 +543,16 @@ public class FabricService {
 
         return null;
     }
+
+
+
+
+
+
+//    public static void main(String[] args) {
+//        String test = "test_worD";
+//        System.out.println(lineToHump(test));
+//
+//    }
 
 }

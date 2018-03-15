@@ -25,7 +25,10 @@ import org.apache.commons.io.IOUtils;
 import org.hyperledger.fabric.sdk.helper.Utils;
 
 import java.io.*;
+import java.util.Base64;
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 
@@ -103,5 +106,60 @@ public class Util {
 
         return matches[0];
 
+    }
+
+
+    /**
+     * 下划线转驼峰
+     * @param str
+     * @return
+     */
+    public static String lineToHump(String str){
+        Pattern linePattern = Pattern.compile("_(\\w)");
+        str = str.toLowerCase();
+        Matcher matcher = linePattern.matcher(str);
+        StringBuffer sb = new StringBuffer();
+        while(matcher.find()){
+            matcher.appendReplacement(sb, matcher.group(1).toUpperCase());
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+
+    /**
+     * base64解码
+     * @param input
+     * @return
+     */
+    public static String Base64Decoder(String input) {
+        final Base64.Decoder decoder = Base64.getDecoder();
+        String output = null;
+        try {
+            output = new String(decoder.decode(input), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return output;
+    }
+
+
+    /**
+     * base64编码
+     * @param input
+     * @return
+     */
+    public static String Base64Encoder(String input) {
+        final Base64.Encoder encoder = Base64.getEncoder();
+
+        String output = null;
+
+        try {
+            output = encoder.encodeToString(input.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return output;
     }
 }
