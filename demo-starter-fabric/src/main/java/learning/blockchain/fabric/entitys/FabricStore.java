@@ -1,4 +1,4 @@
-package learning.blockchain.entitys;
+package learning.blockchain.fabric.entitys;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -24,14 +24,14 @@ import java.util.Properties;
  * Description          : A local file-based key value store.
  */
 
-public class LedgerStore {
-    private Log logger = LogFactory.getLog(LedgerStore.class);
+public class FabricStore {
+    private Log logger = LogFactory.getLog(FabricStore.class);
 
     private String file;
-    private final Map<String, LedgerUser> members = new HashMap<>();
+    private final Map<String, FabricUser> members = new HashMap<>();
 
 
-    public LedgerStore(File file) {
+    public FabricStore(File file) {
         this.file = file.getAbsolutePath();
     }
 
@@ -87,18 +87,18 @@ public class LedgerStore {
      * @param org
      * @return user
      */
-    public LedgerUser getMember(String name, String org) {
+    public FabricUser getMember(String name, String org) {
 
-        // Try to get the LedgerUser state from the cache
-        LedgerUser ledgerUser = members.get(LedgerUser.toKeyValStoreName(name, org));
-        if (null != ledgerUser) {
-            return ledgerUser;
+        // Try to get the FabricUser state from the cache
+        FabricUser fabricUser = members.get(FabricUser.toKeyValStoreName(name, org));
+        if (null != fabricUser) {
+            return fabricUser;
         }
 
-        // Create the LedgerUser and try to restore it's state from the key value store (if found).
-        ledgerUser = new LedgerUser(name, org, this);
+        // Create the FabricUser and try to restore it's state from the key value store (if found).
+        fabricUser = new FabricUser(name, org, this);
 
-        return ledgerUser;
+        return fabricUser;
 
     }
 
@@ -114,29 +114,29 @@ public class LedgerStore {
      * @return user
      * @throws IOException
      */
-    public LedgerUser getMember(String name, String org, String mspId, File privateKeyFile,
+    public FabricUser getMember(String name, String org, String mspId, File privateKeyFile,
                                 File certificateFile) throws IOException {
 
         try {
-            // Try to get the LedgerUser state from the cache
-            LedgerUser ledgerUser = members.get(LedgerUser.toKeyValStoreName(name, org));
-            if (null != ledgerUser) {
-                return ledgerUser;
+            // Try to get the FabricUser state from the cache
+            FabricUser fabricUser = members.get(FabricUser.toKeyValStoreName(name, org));
+            if (null != fabricUser) {
+                return fabricUser;
             }
 
-            // Create the LedgerUser and try to restore it's state from the key value store (if found).
-            ledgerUser = new LedgerUser(name, org, this);
-            ledgerUser.setMspId(mspId);
+            // Create the FabricUser and try to restore it's state from the key value store (if found).
+            fabricUser = new FabricUser(name, org, this);
+            fabricUser.setMspId(mspId);
 
             String certificate = new String(IOUtils.toByteArray(new FileInputStream(certificateFile)), "UTF-8");
 
             PrivateKey privateKey = getPrivateKeyFromBytes(IOUtils.toByteArray(new FileInputStream(privateKeyFile)));
 
-            ledgerUser.setEnrollment(new LedgerStore.SampleStoreEnrollement(privateKey, certificate));
+            fabricUser.setEnrollment(new FabricStoreEnrollement(privateKey, certificate));
 
-            ledgerUser.saveState();
+            fabricUser.saveState();
 
-            return ledgerUser;
+            return fabricUser;
         } catch (IOException | ClassCastException e) {
             e.printStackTrace();
             throw e;
@@ -163,14 +163,14 @@ public class LedgerStore {
         return privateKey;
     }
 
-    static final class SampleStoreEnrollement implements Enrollment, Serializable {
+    static final class FabricStoreEnrollement implements Enrollment, Serializable {
 
         private static final long serialVersionUID = -7077068549994159470L;
         private final PrivateKey privateKey;
         private final String certificate;
 
 
-        SampleStoreEnrollement(PrivateKey privateKey, String certificate)  {
+        FabricStoreEnrollement(PrivateKey privateKey, String certificate)  {
 
 
             this.certificate = certificate;

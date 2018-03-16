@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-learning.blockchain.fabric.config.FabricAutoConfig
+learning.blockchain.fabric.configs.FabricAutoConfig

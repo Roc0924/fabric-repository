@@ -14,7 +14,7 @@
  *
  */
 
-package learning.blockchain.ledger.utils;
+package learning.blockchain.fabric.utils;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -91,6 +91,7 @@ public class Util {
     public static File findFileSk(File directory) {
 
         File[] matches = directory.listFiles((dir, name) -> name.endsWith("_sk"));
+        System.out.println(directory.getAbsolutePath());
 
         if (null == matches) {
             throw new RuntimeException(format("Matches returned null does %s directory exist?", directory.getAbsoluteFile().getName()));

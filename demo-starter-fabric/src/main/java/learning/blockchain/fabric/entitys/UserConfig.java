@@ -1,4 +1,4 @@
-package learning.blockchain.fabric.entity;
+package learning.blockchain.fabric.entitys;
 
 /**
  * Create with IntelliJ IDEA

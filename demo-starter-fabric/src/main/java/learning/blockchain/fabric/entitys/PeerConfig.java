@@ -1,14 +1,14 @@
-package learning.blockchain.fabric.entity;
+package learning.blockchain.fabric.entitys;
 
 /**
  * Create with IntelliJ IDEA
  * Author               : wangzhenpeng
  * Date                 : 2018/3/8
- * Time                 : 下午10:15
+ * Time                 : 下午8:53
  * Description          :
  */
 
-public class EventHubConfig {
+public class PeerConfig {
     private String name;
     private String url;
 

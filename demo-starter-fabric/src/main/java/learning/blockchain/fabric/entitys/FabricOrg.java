@@ -1,4 +1,5 @@
-package learning.blockchain.ledger.entitys;
+package learning.blockchain.fabric.entitys;
+
 
 import org.hyperledger.fabric.sdk.Peer;
 import org.hyperledger.fabric.sdk.User;
@@ -14,7 +15,7 @@ import java.util.*;
  * Description          : Organization Representation, Keeps track which resources are defined for the Organization it represents.
  */
 
-public class LedgerOrg {
+public class FabricOrg {
     final String name;
     final String mspid;
     HFCAClient caClient;
@@ -24,23 +25,23 @@ public class LedgerOrg {
     Map<String, String> ordererLocations = new HashMap<>();
     Map<String, String> eventHubLocations = new HashMap<>();
     Set<Peer> peers = new HashSet<>();
-    private LedgerUser admin;
+    private FabricUser admin;
     private String caLocation;
     private Properties caProperties = null;
-    private LedgerUser peerAdmin;
+    private FabricUser peerAdmin;
     private String domainName;
 
 
-    public LedgerOrg(String name, String mspid) {
+    public FabricOrg(String name, String mspid) {
         this.name = name;
         this.mspid = mspid;
     }
 
-    public LedgerUser getAdmin() {
+    public FabricUser getAdmin() {
         return admin;
     }
 
-    public void setAdmin(LedgerUser admin) {
+    public void setAdmin(FabricUser admin) {
         this.admin = admin;
     }
 
@@ -116,7 +117,7 @@ public class LedgerOrg {
         return name;
     }
 
-    public void addUser(LedgerUser user) {
+    public void addUser(FabricUser user) {
         userMap.put(user.getName(), user);
     }
 
@@ -149,11 +150,11 @@ public class LedgerOrg {
     }
 
 
-    public LedgerUser getPeerAdmin() {
+    public FabricUser getPeerAdmin() {
         return peerAdmin;
     }
 
-    public void setPeerAdmin(LedgerUser peerAdmin) {
+    public void setPeerAdmin(FabricUser peerAdmin) {
         this.peerAdmin = peerAdmin;
     }
 

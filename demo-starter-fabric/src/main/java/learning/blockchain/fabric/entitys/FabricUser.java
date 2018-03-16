@@ -1,4 +1,4 @@
-package learning.blockchain.entitys;
+package learning.blockchain.fabric.entitys;
 
 import io.netty.util.internal.StringUtil;
 import org.bouncycastle.util.encoders.Hex;
@@ -16,7 +16,7 @@ import java.util.Set;
  * Description          : 账本中的用户
  */
 
-public class LedgerUser implements User, Serializable{
+public class FabricUser implements User, Serializable{
     private static final long serialVersionUID = 8966887165686602959L;
 
     private String name;
@@ -29,16 +29,16 @@ public class LedgerUser implements User, Serializable{
     String mspId;
     Enrollment enrollment = null;
 
-    private transient LedgerStore ledgerStore;
+    private transient FabricStore fabricStore;
     private String keyValStoreName;
 
 
-    LedgerUser(String name, String ledgerOrg, LedgerStore ledgerStore) {
+    FabricUser(String name, String fabricOrg, FabricStore fabricStore) {
         this.name = name;
-        this.organization = ledgerOrg;
-        this.ledgerStore = ledgerStore;
-        this.keyValStoreName = toKeyValStoreName(this.name, ledgerOrg);
-        String memberStr = this.ledgerStore.getValue(keyValStoreName);
+        this.organization = fabricOrg;
+        this.fabricStore = fabricStore;
+        this.keyValStoreName = toKeyValStoreName(this.name, fabricOrg);
+        String memberStr = this.fabricStore.getValue(keyValStoreName);
         if (null == memberStr) {
             saveState();
         } else {
@@ -134,7 +134,7 @@ public class LedgerUser implements User, Serializable{
             ObjectOutputStream oos = new ObjectOutputStream(bos);
             oos.writeObject(this);
             oos.flush();
-            ledgerStore.setValue(keyValStoreName, Hex.toHexString(bos.toByteArray()));
+            fabricStore.setValue(keyValStoreName, Hex.toHexString(bos.toByteArray()));
             bos.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -144,8 +144,8 @@ public class LedgerUser implements User, Serializable{
     /**
      * Restore the state of this user from the key value store (if found).  If not found, do nothing.
      */
-    LedgerUser restoreState() {
-        String memberStr = ledgerStore.getValue(keyValStoreName);
+    FabricUser restoreState() {
+        String memberStr = fabricStore.getValue(keyValStoreName);
         if (null != memberStr) {
             // The user was found in the key value store, so restore the
             // state.
@@ -153,7 +153,7 @@ public class LedgerUser implements User, Serializable{
             ByteArrayInputStream bis = new ByteArrayInputStream(serialized);
             try {
                 ObjectInputStream ois = new ObjectInputStream(bis);
-                LedgerUser state = (LedgerUser) ois.readObject();
+                FabricUser state = (FabricUser) ois.readObject();
                 if (state != null) {
                     this.name = state.name;
                     this.roles = state.roles;
