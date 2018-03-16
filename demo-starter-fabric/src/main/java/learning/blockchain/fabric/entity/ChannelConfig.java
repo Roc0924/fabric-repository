@@ -1,4 +1,4 @@
-package learning.blockchain.configuration;
+package learning.blockchain.fabric.entity;
 
 /**
  * Create with IntelliJ IDEA

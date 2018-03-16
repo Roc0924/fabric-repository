@@ -1,12 +1,12 @@
-package learning.blockchain.fabric;
+package learning.blockchain.ledger.admin;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DemoStarterFabricApplication {
+public class DemoStarterLedgerAdminApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DemoStarterFabricApplication.class, args);
+		SpringApplication.run(DemoStarterLedgerAdminApplication.class, args);
 	}
 }
