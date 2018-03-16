@@ -59,8 +59,10 @@ public class FabricController {
     public void addAmountFromBudget(
             @RequestParam(name = "accountId") String accountId,
             @RequestParam(name = "planId") String planId,
-            @RequestParam(name = "delta") Integer delta) {
-        fabricService.addAmountFromBudget(planId, accountId, delta);
+            @RequestParam(name = "delta") Integer delta,
+            @RequestParam(name = "orderId") String orderId,
+            @RequestParam(name = "kid") String kid) {
+        fabricService.addAmountFromBudget(orderId, planId, accountId, delta, kid);
 
     }
 
@@ -68,8 +70,10 @@ public class FabricController {
     public void rollBackAmountToBudget(
             @RequestParam(name = "accountId") String accountId,
             @RequestParam(name = "planId") String planId,
-            @RequestParam(name = "delta") Integer delta) {
-        fabricService.rollBackAmountToBudget(accountId, planId, delta);
+            @RequestParam(name = "delta") Integer delta,
+            @RequestParam(name = "orderId") String orderId,
+            @RequestParam(name = "kid") String kid) {
+        fabricService.rollBackAmountToBudget(orderId, accountId, planId, delta, kid);
 
     }
 
@@ -77,8 +81,10 @@ public class FabricController {
     public void addExpectAmountFromBudget(
             @RequestParam(name = "accountId") String accountId,
             @RequestParam(name = "planId") String planId,
-            @RequestParam(name = "delta") Integer delta) {
-        fabricService.addExpectAmountFromBudget(planId, accountId, delta);
+            @RequestParam(name = "delta") Integer delta,
+            @RequestParam(name = "orderId") String orderId,
+            @RequestParam(name = "kid") String kid) {
+        fabricService.addExpectAmountFromBudget(orderId, planId, accountId, delta, kid);
 
     }
 
@@ -86,8 +92,22 @@ public class FabricController {
     public void rollBackExpectAmountToBudget(
             @RequestParam(name = "accountId") String accountId,
             @RequestParam(name = "planId") String planId,
-            @RequestParam(name = "delta") Integer delta) {
-        fabricService.rollBackExpectAmountToBudget(accountId, planId, delta);
+            @RequestParam(name = "delta") Integer delta,
+            @RequestParam(name = "orderId") String orderId,
+            @RequestParam(name = "kid") String kid) {
+        fabricService.rollBackExpectAmountToBudget(orderId, accountId, planId, delta, kid);
+
+    }
+
+
+
+    @RequestMapping(value = "/collectExcept", method = RequestMethod.GET)
+    public void collectExcept(
+            @RequestParam(name = "accountId") String accountId,
+            @RequestParam(name = "delta") Integer delta,
+            @RequestParam(name = "orderId") String orderId,
+            @RequestParam(name = "kid") String kid) {
+        fabricService.collectExcept(orderId, accountId, delta, kid);
 
     }
 

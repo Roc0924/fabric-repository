@@ -1,0 +1,631 @@
+{
+	"info": {
+		"name": "fabric",
+		"_postman_id": "0bad7fea-de05-472d-95eb-b2c014ba0a82",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "install",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "localhost:8081/fabric/install",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"fabric",
+						"install"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "queryInstalledChaincodes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "localhost:8081/fabric/queryInstalledChaincodes",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"fabric",
+						"queryInstalledChaincodes"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "queryInstalledChaincodeByName",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "localhost:8081/fabric/queryInstalledChaincodeByName?chainCodeName=rebate_cc",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"fabric",
+						"queryInstalledChaincodeByName"
+					],
+					"query": [
+						{
+							"key": "chainCodeName",
+							"value": "rebate_cc",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "queryInstalledChaincodeByNameAndVersion",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "localhost:8081/fabric/queryInstalledChaincodeByNameAndVersion?name=rebate_cc&version=4",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"fabric",
+						"queryInstalledChaincodeByNameAndVersion"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "rebate_cc",
+							"equals": true
+						},
+						{
+							"key": "version",
+							"value": "4",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "upgradeInstalledChaincode",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"path\": \"github.com/chain_code\",\n    \"name\": \"rebate_cc\",\n    \"version\": \"4\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8081/fabric/upgradeInstalledChaincode",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"fabric",
+						"upgradeInstalledChaincode"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "injectBudget",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"path\": \"github.com/chain_code\",\n    \"name\": \"rebate_directly_cc_json\",\n    \"version\": \"5\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8081/fabric/injectBudget?planId=123123&budgetAmount=100000000",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"fabric",
+						"injectBudget"
+					],
+					"query": [
+						{
+							"key": "planId",
+							"value": "123123",
+							"equals": true
+						},
+						{
+							"key": "budgetAmount",
+							"value": "100000000",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "queryBudget",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"path\": \"github.com/chain_code\",\n    \"name\": \"rebate_directly_cc_json\",\n    \"version\": \"5\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8081/fabric/queryBudget?planId=123123",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"fabric",
+						"queryBudget"
+					],
+					"query": [
+						{
+							"key": "planId",
+							"value": "123123",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "createAccount",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"accountId\":\"17025795491\",\n    \"amount\":1000000000000,\n    \"expectAmount\":1000000,\n    \"status\":\"normal\",\n    \"details\":\"create\",\n    \"memo\":\"create\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8082/fabric/createAccount",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"fabric",
+						"createAccount"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "queryAccount",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8082/fabric/queryAccount?accountId=17025795491",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"fabric",
+						"queryAccount"
+					],
+					"query": [
+						{
+							"key": "accountId",
+							"value": "17025795491",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "deleteAccount",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8082/fabric/deleteAccount?accountId=17025795491",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"fabric",
+						"deleteAccount"
+					],
+					"query": [
+						{
+							"key": "accountId",
+							"value": "17025795491",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "queryAccountHistory",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8082/fabric/queryAccountHistory?accountId=17025795491",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"fabric",
+						"queryAccountHistory"
+					],
+					"query": [
+						{
+							"key": "accountId",
+							"value": "17025795491",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "addAmountFromBudget",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8082/fabric/addAmountFromBudget?accountId=17025795491&planId=123123&delta=100&kid=12312312312312313&orderId=1231order",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"fabric",
+						"addAmountFromBudget"
+					],
+					"query": [
+						{
+							"key": "accountId",
+							"value": "17025795491",
+							"equals": true
+						},
+						{
+							"key": "planId",
+							"value": "123123",
+							"equals": true
+						},
+						{
+							"key": "delta",
+							"value": "100",
+							"equals": true
+						},
+						{
+							"key": "kid",
+							"value": "12312312312312313",
+							"equals": true
+						},
+						{
+							"key": "orderId",
+							"value": "1231order",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "rollBackAmountToBudget",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8082/fabric/rollBackAmountToBudget?accountId=17025795491&planId=123123&delta=100&kid=1231311231231&orderId=ewwerwewerwr",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"fabric",
+						"rollBackAmountToBudget"
+					],
+					"query": [
+						{
+							"key": "accountId",
+							"value": "17025795491",
+							"equals": true
+						},
+						{
+							"key": "planId",
+							"value": "123123",
+							"equals": true
+						},
+						{
+							"key": "delta",
+							"value": "100",
+							"equals": true
+						},
+						{
+							"key": "kid",
+							"value": "1231311231231",
+							"equals": true
+						},
+						{
+							"key": "orderId",
+							"value": "ewwerwewerwr",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "addExpectAmountFromBudget",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8082/fabric/addExpectAmountFromBudget?accountId=17025795491&planId=123123&delta=100&kid=lsdfkadsfja;sdkfja;ds&orderId=sdfsldfjldjlsdfasdfa",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"fabric",
+						"addExpectAmountFromBudget"
+					],
+					"query": [
+						{
+							"key": "accountId",
+							"value": "17025795491",
+							"equals": true
+						},
+						{
+							"key": "planId",
+							"value": "123123",
+							"equals": true
+						},
+						{
+							"key": "delta",
+							"value": "100",
+							"equals": true
+						},
+						{
+							"key": "kid",
+							"value": "lsdfkadsfja;sdkfja;ds",
+							"equals": true
+						},
+						{
+							"key": "orderId",
+							"value": "sdfsldfjldjlsdfasdfa",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "rollBackExpectAmountToBudget",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8082/fabric/rollBackExpectAmountToBudget?accountId=17025795491&planId=123123&delta=100&kid=341234324&orderId=sdfjsldkjflsdwe",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"fabric",
+						"rollBackExpectAmountToBudget"
+					],
+					"query": [
+						{
+							"key": "accountId",
+							"value": "17025795491",
+							"equals": true
+						},
+						{
+							"key": "planId",
+							"value": "123123",
+							"equals": true
+						},
+						{
+							"key": "delta",
+							"value": "100",
+							"equals": true
+						},
+						{
+							"key": "kid",
+							"value": "341234324",
+							"equals": true
+						},
+						{
+							"key": "orderId",
+							"value": "sdfjsldkjflsdwe",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "collectExcept",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8082/fabric/collectExcept?accountId=17025795491&delta=100&kid=341234324&orderId=sdfjsldkjflsdwe",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"fabric",
+						"collectExcept"
+					],
+					"query": [
+						{
+							"key": "accountId",
+							"value": "17025795491",
+							"equals": true
+						},
+						{
+							"key": "delta",
+							"value": "100",
+							"equals": true
+						},
+						{
+							"key": "kid",
+							"value": "341234324",
+							"equals": true
+						},
+						{
+							"key": "orderId",
+							"value": "sdfjsldkjflsdwe",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
