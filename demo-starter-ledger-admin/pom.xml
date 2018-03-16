@@ -35,11 +35,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>learning.blockchain</groupId>
-			<artifactId>demo-starter-fabric</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
         <dependency>
             <groupId>learning.blockchain</groupId>
             <artifactId>demo-starter-fabric</artifactId>

@@ -1,6 +1,8 @@
 package learning.blockchain.ledger.admin.services;
 
-import learning.blockchain.fabric.config.FabricProperties;
+import learning.blockchain.fabric.configs.FabricConfig;
+import learning.blockchain.fabric.configs.FabricProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,10 +14,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class LedgerService {
-    final FabricProperties fabricProperties;
 
-    public LedgerService(FabricProperties fabricProperties) {
-        this.fabricProperties = fabricProperties;
+    final FabricConfig fabricConfig;
+
+    @Autowired
+    public LedgerService(FabricConfig fabricConfig) {
+        this.fabricConfig = fabricConfig;
     }
 
     public void test() {

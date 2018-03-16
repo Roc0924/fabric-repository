@@ -1,6 +1,6 @@
 #hostname: 192.168.95.143
 hostname: 10.115.3.114
-ledger:
+fabric:
   orgs:
     peerOrg1:
       name: peerOrg1
@@ -53,10 +53,10 @@ ledger:
       orgName: org2
       path: e2e-2Orgs/channel
   channelPath: e2e-2Orgs/channel
-  chainCodeList:
-    - name: rebate_cc
-      path: github.com/chain_code
-      version: 1
+#  chainCodeList:
+#    - name: rebate_cc
+#      path: github.com/chain_code
+#      version: 1
   chainCodes:
     rebate_cc:
       name: rebate_cc
@@ -72,9 +72,9 @@ ledger:
   cryptoConfigPath: crypto-config/peerOrganizations/
   currentOrgName: peerOrg1
   currentUserName: user1
-  currentChaincodeVersion: 7
+  currentChaincodeVersion: 1
   currentChaincodeName: rebate_cc
 
 server:
-  port: 8082
+  port: 8083
 debug: false
