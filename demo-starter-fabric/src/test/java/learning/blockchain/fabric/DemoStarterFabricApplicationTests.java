@@ -1,4 +1,4 @@
-package learning.blockchain.test;
+package learning.blockchain.fabric;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class LedgerStarterTestApplicationTests {
+public class DemoStarterFabricApplicationTests {
 
 	@Test
 	public void contextLoads() {

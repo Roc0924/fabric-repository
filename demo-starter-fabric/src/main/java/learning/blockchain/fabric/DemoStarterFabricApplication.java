@@ -1,12 +1,12 @@
-package learning.blockchain.test;
+package learning.blockchain.fabric;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LedgerStarterTestApplication {
+public class DemoStarterFabricApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(LedgerStarterTestApplication.class, args);
+		SpringApplication.run(DemoStarterFabricApplication.class, args);
 	}
 }
