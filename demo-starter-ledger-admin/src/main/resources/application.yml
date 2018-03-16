@@ -1,11 +1,11 @@
 #hostname: 192.168.95.143
-hostname: 10.115.3.113
+hostname: 10.115.3.114
 ledger:
   orgs:
-    org1:
-      name: org1
+    peerOrg1:
+      name: peerOrg1
       mspId: Org1MSP
-      domname: org1.example.com
+      domName: org1.example.com
       caLocation: http://${hostname}:7054
       peers:
         - name: peer0.org1.example.com
@@ -20,10 +20,10 @@ ledger:
           url: grpc://${hostname}:7053
         - name: peer1.org1.example.com
           url: grpc://${hostname}:7058
-    org2:
-      name: org2
+    peerOrg2:
+      name: peerOrg2
       mspId: Org2MSP
-      domname: org2.example.com
+      domName: org2.example.com
       caLocation: http://${hostname}:8054
       peers:
         - name: peer0.org2.example.com
@@ -53,19 +53,28 @@ ledger:
       orgName: org2
       path: e2e-2Orgs/channel
   channelPath: e2e-2Orgs/channel
-  chaincodeList:
-    - name: rebare_cc
-      path: demo/target/classes
+  chainCodeList:
+    - name: rebate_cc
+      path: github.com/chain_code
       version: 1
+  chainCodes:
+    rebate_cc:
+      name: rebate_cc
+      path: github.com/chain_code
+      version: 1
+
   times:
     gossipWaitTime: 500000
-    invokeWaitTime: 10000000
+    invokeWaitTime: 10
     deployWaitTime: 12000000
     proposalWaitTime: 12000000
   runWithTls: false
   cryptoConfigPath: crypto-config/peerOrganizations/
-  currentOrgName: org1
+  currentOrgName: peerOrg1
+  currentUserName: user1
+  currentChaincodeVersion: 7
+  currentChaincodeName: rebate_cc
 
 server:
-  port: 8081
+  port: 8082
 debug: false
